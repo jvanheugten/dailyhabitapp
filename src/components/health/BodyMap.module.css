@@ -1,0 +1,57 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggle {
+  display: flex;
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.toggle button {
+  flex: 1;
+  padding: 5px 20px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #555;
+  transition: all 0.15s;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.toggle button.active {
+  background: #4ade80;
+  color: #000;
+  font-weight: 700;
+}
+
+.svgWrapper {
+  position: relative;
+  width: 140px;
+}
+
+.bodyImg {
+  width: 100%;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hitArea {
+  transition: fill 0.1s;
+}
+
+.hitArea:hover {
+  fill: rgba(99, 102, 241, 0.15);
+}
