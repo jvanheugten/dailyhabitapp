@@ -1,0 +1,64 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.regionLabel {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.viewSelector {
+  display: flex;
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.viewBtn {
+  flex: 1;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #555;
+  transition: all 0.15s;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.activeView {
+  background: #4ade80;
+  color: #000;
+  font-weight: 700;
+}
+
+.drawArea {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #111;
+  aspect-ratio: 2 / 3;
+}
+
+.regionImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.pathLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
