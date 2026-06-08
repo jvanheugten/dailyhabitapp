@@ -1,38 +1,40 @@
 .picker {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .level {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 9px 12px;
-  border-radius: 8px;
-  background: #1a1a1a;
-  border: 1.5px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid transparent;
   transition: border-color 0.15s, background 0.15s;
   text-align: left;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 14px;
-  color: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
 }
 
 .level.selected {
-  background: color-mix(in srgb, var(--color) 15%, #111);
-  border-color: var(--color);
+  background: color-mix(in srgb, var(--color) 10%, var(--surface));
+  border-color: color-mix(in srgb, var(--color) 50%, transparent);
+  color: var(--text);
 }
 
 .dot {
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--color);
   flex-shrink: 0;
+  box-shadow: 0 0 6px var(--color);
 }
 
 .label {
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
 }

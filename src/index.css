@@ -1,9 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:               #070c16;
+  --surface:          #0d1525;
+  --surface-2:        #121e30;
+  --border:           #1a2d42;
+  --border-subtle:    #132030;
+  --text:             #c8d8f0;
+  --text-muted:       #4a6a88;
+  --text-dim:         #2a4a65;
+  --accent:           #3d8ef0;
+  --accent-dim:       rgba(61,142,240,0.12);
+  --accent-glow:      rgba(61,142,240,0.28);
+  --green:            #4ade80;
+  --green-dim:        rgba(74,222,128,0.12);
+  --mono:             'DM Mono', monospace;
+  --radius-sm:        6px;
+  --radius:           10px;
+  --radius-lg:        16px;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body, #root { height: 100%; min-height: 100dvh; }
 body {
-  background: #111;
-  color: #e0e0e0;
-  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
 }

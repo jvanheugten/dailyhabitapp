@@ -71,19 +71,22 @@ export function Health() {
 
       {tab === 'overview' && (
         <div className={styles.overview}>
-          <div className={styles.bodyMapSection}>
+          <div className={styles.mapCard}>
+            <span className={styles.mapCardHeader}>Body Map</span>
             <BodyMap onRegionSelect={() => setShowSymptomSheet(true)} symptoms={recentSymptoms} />
           </div>
 
           {latestVitals.length > 0 && (
             <div className={styles.section}>
               <span className={styles.sectionLabel}>Recent vitals</span>
-              {latestVitals.map((vt) => (
-                <div key={vt.id} className={styles.vitalRow}>
-                  <span className={styles.vitalName}>{vt.name}</span>
-                  <span className={styles.vitalValue}>{vitalValueDisplay(vt, vt.entry)}</span>
-                </div>
-              ))}
+              <div className={styles.vitalGrid}>
+                {latestVitals.map((vt) => (
+                  <div key={vt.id} className={styles.vitalCard}>
+                    <span className={styles.vitalName}>{vt.name}</span>
+                    <span className={styles.vitalValue}>{vitalValueDisplay(vt, vt.entry)}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

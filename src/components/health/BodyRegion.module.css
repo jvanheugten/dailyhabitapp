@@ -1,50 +1,47 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+.container { display: flex; flex-direction: column; gap: 12px; }
 
-.header {
-  display: flex;
-  align-items: center;
-}
+.header { display: flex; align-items: center; }
 
 .regionLabel {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
 }
 
 .viewSelector {
   display: flex;
-  background: #1a1a1a;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 2px;
-  gap: 2px;
+  padding: 3px;
+  gap: 3px;
 }
 
 .viewBtn {
   flex: 1;
   padding: 5px 0;
-  border-radius: 6px;
+  border-radius: 5px;
   font-size: 11px;
-  color: #555;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
   transition: all 0.15s;
-  border: none;
-  background: transparent;
-  cursor: pointer;
+  border: 1px solid transparent;
 }
 
 .activeView {
-  background: #4ade80;
-  color: #000;
-  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--accent);
+  border-color: var(--border);
 }
 
 .drawArea {
   position: relative;
-  border-radius: 10px;
+  border-radius: var(--radius);
   overflow: hidden;
-  background: #111;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
   aspect-ratio: 2 / 3;
 }
 
@@ -53,6 +50,7 @@
   height: 100%;
   object-fit: contain;
   display: block;
+  opacity: 0.9;
 }
 
 .pathLayer {
