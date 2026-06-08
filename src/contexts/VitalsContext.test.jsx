@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { VitalsProvider, useVitals } from './VitalsContext'
 import { db } from '../db/db'
@@ -93,4 +94,87 @@ test('deleteVitalType no-ops for is_standard types', async () => {
     await result.current.deleteVitalType(stdId)
   })
   expect(result.current.vitalTypes.length).toBe(before)
+})
+
+describe('getVitalTypeMap', () => {
+  beforeEach(async () => {
+    await db.vital_entries.clear()
+    await db.vital_types.clear()
+    await db.vital_types.add({
+      id: 1,
+      name: 'Heart Rate',
+      unit: 'bpm',
+      value_schema: 'single',
+      is_standard: true,
+      createdAt: new Date().toISOString(),
+    })
+  })
+
+  it('returns object keyed by name with id as value', async () => {
+    const { result } = renderHook(() => useVitals(), { wrapper })
+    await act(async () => {})
+    const map = result.current.getVitalTypeMap()
+    expect(map['Heart Rate']).toBe(1)
+  })
+})
+
+describe('bulkImportGoogleFitEntries', () => {
+  beforeEach(async () => {
+    await db.vital_entries.clear()
+    await db.vital_types.clear()
+    await db.vital_types.add({
+      id: 1,
+      name: 'Heart Rate',
+      unit: 'bpm',
+      value_schema: 'single',
+      is_standard: true,
+      createdAt: new Date().toISOString(),
+    })
+  })
+
+  it('inserts entries and updates state', async () => {
+    const { result } = renderHook(() => useVitals(), { wrapper })
+    await act(async () => {})
+    const entries = [
+      {
+        vital_type_id: 1,
+        value: JSON.stringify(72),
+        source: 'google_fit',
+        timestamp: new Date().toISOString(),
+        notes: '',
+      },
+      {
+        vital_type_id: 1,
+        value: JSON.stringify(75),
+        source: 'google_fit',
+        timestamp: new Date(Date.now() - 86400000).toISOString(),
+        notes: '',
+      },
+    ]
+    await act(async () => {
+      await result.current.bulkImportGoogleFitEntries(entries)
+    })
+    expect(result.current.vitalEntries.filter((e) => e.source === 'google_fit')).toHaveLength(2)
+  })
+
+  it('skips duplicate timestamps for same vital_type_id', async () => {
+    const { result } = renderHook(() => useVitals(), { wrapper })
+    await act(async () => {})
+    const ts = new Date().toISOString()
+    const entry = {
+      vital_type_id: 1,
+      value: JSON.stringify(72),
+      source: 'google_fit',
+      timestamp: ts,
+      notes: '',
+    }
+    await act(async () => {
+      await result.current.bulkImportGoogleFitEntries([entry])
+    })
+    await act(async () => {
+      await result.current.bulkImportGoogleFitEntries([entry])
+    })
+    const fitEntries = result.current.vitalEntries.filter((e) => e.source === 'google_fit')
+    expect(fitEntries).toHaveLength(1)
+  })
 })

@@ -60,6 +60,21 @@ export function VitalsProvider({ children }) {
       .toArray()
   }, [])
 
+  const getVitalTypeMap = useCallback(() => {
+    return Object.fromEntries(vitalTypes.map((t) => [t.name, t.id]))
+  }, [vitalTypes])
+
+  const bulkImportGoogleFitEntries = useCallback(async (entries) => {
+    if (!entries.length) return
+    const existing = await db.vital_entries.where('source').equals('google_fit').toArray()
+    const existingKeys = new Set(existing.map((e) => `${e.vital_type_id}::${e.timestamp}`))
+    const fresh = entries.filter((e) => !existingKeys.has(`${e.vital_type_id}::${e.timestamp}`))
+    if (!fresh.length) return
+    await db.vital_entries.bulkAdd(fresh)
+    const saved = await db.vital_entries.orderBy('timestamp').reverse().limit(200).toArray()
+    setVitalEntries(saved)
+  }, [])
+
   return (
     <VitalsContext.Provider
       value={{
@@ -70,6 +85,8 @@ export function VitalsProvider({ children }) {
         deleteVitalType,
         addVitalEntry,
         getEntriesForType,
+        getVitalTypeMap,
+        bulkImportGoogleFitEntries,
       }}
     >
       {children}
