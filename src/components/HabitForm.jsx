@@ -56,7 +56,15 @@ export function HabitForm({ habit, onSave, onClose }) {
           </div>
           <label className={styles.label}>
             Reminder time (optional)
-            <input type="time" className={styles.input} value={time} onChange={e => setTime(e.target.value)} />
+            <input
+              type="time"
+              className={styles.input}
+              value={time}
+              onChange={e => {
+                setTime(e.target.value)
+                if (!e.target.value) setNotifyEnabled(false)
+              }}
+            />
           </label>
           {time && (
             <label className={styles.toggleRow}>

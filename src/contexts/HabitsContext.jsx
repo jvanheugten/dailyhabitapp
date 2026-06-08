@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { db } from '../db/db'
 import { today } from '../utils/dates'
+import { scheduleHabitReminders } from '../notifications'
 
 const HabitsContext = createContext(null)
 
@@ -28,6 +29,7 @@ export function HabitsProvider({ children }) {
     const id = await db.habits.add({ ...data, createdAt: new Date().toISOString() })
     const habit = await db.habits.get(id)
     setHabits(prev => [...prev, habit])
+    scheduleHabitReminders([habit])
     return habit
   }, [])
 
