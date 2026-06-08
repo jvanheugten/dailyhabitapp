@@ -1,0 +1,5 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#111"/>
+  <path d="M30,40 L170,40 L155,160 L45,160Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Chest · left</text>
+</svg>

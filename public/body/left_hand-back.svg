@@ -1,0 +1,5 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#111"/>
+  <path d="M60,160 L60,80 Q60,30 100,30 Q140,30 140,80 L140,160 Q140,180 100,190 Q60,180 60,160Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Left Hand · back</text>
+</svg>

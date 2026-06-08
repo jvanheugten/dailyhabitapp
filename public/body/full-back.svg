@@ -1,0 +1,12 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#111"/>
+  
+      <ellipse cx="100" cy="28" rx="22" ry="25" fill="none" stroke="#4a4a4a" stroke-width="2"/>
+      <path d="M68,55 L68,120 Q100,128 132,120 L132,55 Q116,48 100,48 Q84,48 68,55Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
+      <path d="M68,120 L65,150 Q100,158 135,150 L132,120 Q100,128 68,120Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
+      <path d="M65,150 L60,200 Q72,205 82,200 L85,150Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
+      <path d="M135,150 L140,200 Q128,205 118,200 L115,150Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
+      <path d="M45,56 L38,100 Q44,106 52,102 L60,56Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
+      <path d="M155,56 L162,100 Q156,106 148,102 L140,56Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
+  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Full Body · back</text>
+</svg>
