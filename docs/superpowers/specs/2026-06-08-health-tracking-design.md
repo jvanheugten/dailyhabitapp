@@ -28,7 +28,7 @@ Four new Dexie tables added to the existing `db.version(2)` schema:
 |---|---|---|
 | `id` | auto-increment | primary key |
 | `symptom_type_id` | number | FK → symptom_types.id |
-| `region` | string | 'head' \| 'chest' \| 'abdomen' \| 'back' \| 'left_arm' \| 'right_arm' \| 'left_leg' \| 'right_leg' |
+| `region` | string | 'head' \| 'chest' \| 'abdomen' \| 'back' \| 'left_arm' \| 'right_arm' \| 'left_hand' \| 'right_hand' \| 'left_leg' \| 'right_leg' \| 'left_foot' \| 'right_foot' |
 | `view` | string | 'front' \| 'back' \| 'left' \| 'right' |
 | `svg_paths` | string | JSON array of SVG path `d` strings drawn by user |
 | `intensity` | number | 1–5 (1=Minimal, 2=Mild, 3=Moderate, 4=Severe, 5=Extreme) |
@@ -119,7 +119,7 @@ Segmented control at top: **Overview** / **History**.
 
 **Step 1 — Body Map**
 - Full-body SVG with front/back toggle.
-- Detailed anatomical outline with 8 tappable regions (head, chest, abdomen, back, left arm, right arm, left leg, right leg).
+- Detailed anatomical outline with 12 tappable regions (head, chest, abdomen, back, left arm, right arm, left hand, right hand, left leg, right leg, left foot, right foot).
 - Existing symptoms shown as coloured dots.
 - Tap a region → advances to Step 2.
 
@@ -185,14 +185,18 @@ Static SVG files in `src/assets/body/` — one per region × applicable views:
 src/assets/body/
   full-front.svg
   full-back.svg
-  head-front.svg   head-back.svg   head-left.svg   head-right.svg
-  chest-front.svg  chest-back.svg  chest-left.svg  chest-right.svg
-  abdomen-front.svg  abdomen-back.svg
-  back-front.svg   back-back.svg   back-left.svg   back-right.svg
-  left_arm-front.svg  left_arm-back.svg  left_arm-left.svg  left_arm-right.svg
-  right_arm-front.svg right_arm-back.svg right_arm-left.svg right_arm-right.svg
-  left_leg-front.svg  left_leg-back.svg  left_leg-left.svg  left_leg-right.svg
-  right_leg-front.svg right_leg-back.svg right_leg-left.svg right_leg-right.svg
+  head-front.svg        head-back.svg        head-left.svg        head-right.svg
+  chest-front.svg       chest-back.svg       chest-left.svg       chest-right.svg
+  abdomen-front.svg     abdomen-back.svg
+  back-front.svg        back-back.svg        back-left.svg        back-right.svg
+  left_arm-front.svg    left_arm-back.svg    left_arm-left.svg    left_arm-right.svg
+  right_arm-front.svg   right_arm-back.svg   right_arm-left.svg   right_arm-right.svg
+  left_hand-front.svg   left_hand-back.svg   left_hand-left.svg   left_hand-right.svg
+  right_hand-front.svg  right_hand-back.svg  right_hand-left.svg  right_hand-right.svg
+  left_leg-front.svg    left_leg-back.svg    left_leg-left.svg    left_leg-right.svg
+  right_leg-front.svg   right_leg-back.svg   right_leg-left.svg   right_leg-right.svg
+  left_foot-front.svg   left_foot-back.svg   left_foot-left.svg   left_foot-right.svg
+  right_foot-front.svg  right_foot-back.svg  right_foot-left.svg  right_foot-right.svg
 ```
 
 SVG outlines are swappable without touching logic. Placeholder outlines ship with the implementation; anatomically refined versions can be dropped in later.
