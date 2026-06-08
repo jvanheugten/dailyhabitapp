@@ -1,24 +1,12 @@
 import { intensityColor } from '../../utils/intensity'
+import { REGIONS } from './regions'
 import { DrawingCanvas } from './DrawingCanvas'
 import styles from './BodyRegion.module.css'
 
 // Regions that only have front/back (no left/right view)
 const FRONT_BACK_ONLY = ['abdomen', 'back']
 
-const REGION_LABELS = {
-  head: 'Head',
-  chest: 'Chest',
-  abdomen: 'Abdomen',
-  back: 'Back',
-  left_arm: 'Left Arm',
-  right_arm: 'Right Arm',
-  left_hand: 'Left Hand',
-  right_hand: 'Right Hand',
-  left_leg: 'Left Leg',
-  right_leg: 'Right Leg',
-  left_foot: 'Left Foot',
-  right_foot: 'Right Foot',
-}
+const REGION_LABELS = Object.fromEntries(REGIONS.map((r) => [r.id, r.label]))
 
 const ALL_VIEWS = ['front', 'back', 'left', 'right']
 

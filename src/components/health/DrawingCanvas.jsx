@@ -64,9 +64,11 @@ export function DrawingCanvas({ paths, onPathsChange, color, strokeWidth = 8 }) 
         onMouseDown={onStart}
         onMouseMove={onMove}
         onMouseUp={onEnd}
+        onMouseLeave={onEnd}
         onTouchStart={onStart}
         onTouchMove={onMove}
         onTouchEnd={onEnd}
+        onTouchCancel={onEnd}
       />
       <div className={styles.tools}>
         <button type="button" className={styles.tool} aria-label="Draw">

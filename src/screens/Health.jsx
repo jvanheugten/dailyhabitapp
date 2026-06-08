@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { useHealth } from '../contexts/HealthContext'
 import { useVitals } from '../contexts/VitalsContext'
 import { BodyMap } from '../components/health/BodyMap'
@@ -9,17 +9,18 @@ import { intensityLabel, intensityColor } from '../utils/intensity'
 import styles from './Health.module.css'
 
 export function Health() {
-  const { symptoms, getRecentSymptoms } = useHealth()
+  const { symptoms } = useHealth()
   const { vitalTypes, vitalEntries } = useVitals()
   const [tab, setTab] = useState('overview')
   const [showSymptomSheet, setShowSymptomSheet] = useState(false)
   const [showVitalSheet, setShowVitalSheet] = useState(false)
-  const [recentSymptoms, setRecentSymptoms] = useState([])
   const [historyFilter, setHistoryFilter] = useState('all')
 
-  useEffect(() => {
-    getRecentSymptoms(7).then(setRecentSymptoms)
-  }, [getRecentSymptoms, symptoms])
+  const recentSymptoms = useMemo(() => {
+    const cutoff = new Date()
+    cutoff.setDate(cutoff.getDate() - 7)
+    return symptoms.filter((s) => s.timestamp >= cutoff.toISOString())
+  }, [symptoms])
 
   // Last entry per vital type for the overview
   const latestVitals = vitalTypes
@@ -119,8 +120,8 @@ export function Health() {
             ))}
           </div>
           {filteredHistory.length === 0 && <p className={styles.empty}>No health events yet.</p>}
-          {filteredHistory.map((item, i) => (
-            <div key={i} className={styles.historyRow}>
+          {filteredHistory.map((item) => (
+            <div key={`${item.kind}-${item.id}`} className={styles.historyRow}>
               <div className={styles.historyMeta}>
                 <span className={styles.historyType}>
                   {item.kind === 'symptom' ? '🤕' : '📊'}
