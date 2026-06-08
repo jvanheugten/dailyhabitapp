@@ -1,0 +1,20 @@
+.screen { height: 100%; display: flex; flex-direction: column; position: relative; }
+.header { padding: 16px; }
+.header h1 { font-size: 22px; font-weight: 700; }
+.empty { color: #555; font-size: 14px; padding: 20px 16px; }
+.list { list-style: none; padding: 0 12px; display: flex; flex-direction: column; gap: 6px; }
+.item { display: flex; align-items: center; background: #1a1a1a; border-radius: 10px; padding: 2px 8px 2px 0; }
+.itemContent { flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 12px; }
+.habitName { font-size: 15px; font-weight: 500; }
+.habitDays { font-size: 11px; color: #666; }
+.deleteBtn { font-size: 14px; color: #666; padding: 8px; }
+.confirmRow { display: flex; gap: 6px; padding-right: 4px; }
+.deleteConfirmBtn { background: #7f1d1d; color: #fca5a5; font-size: 12px; padding: 6px 10px; border-radius: 6px; }
+.cancelBtn { background: #1e1e1e; color: #888; font-size: 12px; padding: 6px 10px; border-radius: 6px; }
+.fab {
+  position: fixed; bottom: calc(64px + env(safe-area-inset-bottom, 0) + 16px); right: 20px;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: #4ade80; color: #000; font-size: 28px; font-weight: 300;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
