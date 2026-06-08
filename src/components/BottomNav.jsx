@@ -4,6 +4,7 @@ const TABS = [
   { id: 'today', label: 'Today', icon: '✅' },
   { id: 'habits', label: 'Habits', icon: '⚙️' },
   { id: 'journal', label: 'Journal', icon: '📓' },
+  { id: 'health', label: 'Health', icon: '🩺' },
 ]
 
 export function BottomNav({ activeTab, onTabChange }) {

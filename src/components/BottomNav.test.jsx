@@ -2,11 +2,12 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BottomNav } from './BottomNav'
 
-test('renders three tabs', () => {
+test('renders four tabs', () => {
   render(<BottomNav activeTab="today" onTabChange={() => {}} />)
   expect(screen.getByText('Today')).toBeInTheDocument()
   expect(screen.getByText('Habits')).toBeInTheDocument()
   expect(screen.getByText('Journal')).toBeInTheDocument()
+  expect(screen.getByText('Health')).toBeInTheDocument()
 })
 
 test('active tab has aria-current="page"', () => {
