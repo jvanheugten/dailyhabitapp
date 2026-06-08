@@ -1,0 +1,29 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.tools {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 10;
+}
+
+.tool {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(26, 26, 26, 0.9);
+  border: 1px solid #333;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
