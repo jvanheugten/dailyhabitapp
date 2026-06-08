@@ -1,0 +1,38 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.level {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: #1a1a1a;
+  border: 1.5px solid transparent;
+  transition: border-color 0.15s, background 0.15s;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  color: inherit;
+}
+
+.level.selected {
+  background: color-mix(in srgb, var(--color) 15%, #111);
+  border-color: var(--color);
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color);
+  flex-shrink: 0;
+}
+
+.label {
+  font-size: 14px;
+}
