@@ -72,7 +72,19 @@ describe('version 2 tables', () => {
   test('vital_types table exists and is seeded with 6 standard types', async () => {
     const types = await db.vital_types.toArray()
     expect(db.vital_types).toBeDefined()
-    expect(types).toHaveLength(6)
+    expect(types).toHaveLength(10)
+  })
+
+  test('vital_types includes all 10 standard types after seeding', async () => {
+    const types = await db.vital_types.toArray()
+    const names = types.map((t) => t.name)
+    expect(names).toContain('Steps')
+    expect(names).toContain('Calories')
+    expect(names).toContain('Active Minutes')
+    expect(names).toContain('Sleep Duration')
+    const steps = types.find((t) => t.name === 'Steps')
+    expect(steps.is_standard).toBe(true)
+    expect(steps.unit).toBe('steps')
   })
 
   test('can add and retrieve a symptom', async () => {

@@ -60,6 +60,41 @@ db.version(1).stores({
   notification_prefs: 'habitId',
 })
 
+const ACTIVITY_VITAL_TYPES = [
+  {
+    name: 'Steps',
+    unit: 'steps',
+    value_schema: 'single',
+    is_standard: true,
+    normal_min: null,
+    normal_max: null,
+  },
+  {
+    name: 'Calories',
+    unit: 'kcal',
+    value_schema: 'single',
+    is_standard: true,
+    normal_min: null,
+    normal_max: null,
+  },
+  {
+    name: 'Active Minutes',
+    unit: 'min',
+    value_schema: 'single',
+    is_standard: true,
+    normal_min: null,
+    normal_max: null,
+  },
+  {
+    name: 'Sleep Duration',
+    unit: 'min',
+    value_schema: 'single',
+    is_standard: true,
+    normal_min: null,
+    normal_max: null,
+  },
+]
+
 db.version(2)
   .stores({
     habits: '++id, createdAt',
@@ -81,14 +116,39 @@ db.version(2)
     return tx.table('vital_types').bulkAdd(vital_types_with_timestamp)
   })
 
+db.version(3)
+  .stores({
+    habits: '++id, createdAt',
+    completions: '++id, [habitId+date], date',
+    journal_entries: '++id, &date',
+    notification_prefs: 'habitId',
+    symptom_types: '++id, name, createdAt',
+    symptoms: '++id, symptom_type_id, timestamp, region',
+    vital_types: '++id, name, is_standard',
+    vital_entries: '++id, vital_type_id, timestamp, source',
+    google_fit_sync: '++id, data_type',
+  })
+  .upgrade(async (tx) => {
+    const existing = await tx.table('vital_types').toArray()
+    const existingNames = new Set(existing.map((t) => t.name))
+    const now = new Date().toISOString()
+    const toAdd = ACTIVITY_VITAL_TYPES.filter((t) => !existingNames.has(t.name)).map((t) => ({
+      ...t,
+      createdAt: now,
+    }))
+    if (toAdd.length > 0) {
+      return tx.table('vital_types').bulkAdd(toAdd)
+    }
+  })
+
 export async function ensureVitalTypesSeeded() {
   const count = await db.vital_types.count()
   if (count === 0) {
     const now = new Date().toISOString()
-    const vital_types_with_timestamp = STANDARD_VITAL_TYPES.map((type) => ({
+    const all_vital_types = [...STANDARD_VITAL_TYPES, ...ACTIVITY_VITAL_TYPES].map((type) => ({
       ...type,
       createdAt: now,
     }))
-    await db.vital_types.bulkAdd(vital_types_with_timestamp)
+    await db.vital_types.bulkAdd(all_vital_types)
   }
 }
