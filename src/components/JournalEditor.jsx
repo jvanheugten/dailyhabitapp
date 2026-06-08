@@ -5,7 +5,7 @@ export function JournalEditor({ value, onChange, onBlur }) {
   const { isSupported, isListening, startListening } = useSpeech()
 
   function handleMic() {
-    startListening(transcript => {
+    startListening((transcript) => {
       onChange(value ? `${value} ${transcript}` : transcript)
     })
   }
@@ -15,7 +15,7 @@ export function JournalEditor({ value, onChange, onBlur }) {
       <textarea
         className={styles.textarea}
         value={value}
-        onChange={e => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
         placeholder="Add a note for today..."
         rows={3}

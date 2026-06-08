@@ -9,7 +9,7 @@ const TABS = [
 export function BottomNav({ activeTab, onTabChange }) {
   return (
     <nav className={styles.nav}>
-      {TABS.map(tab => (
+      {TABS.map((tab) => (
         <button
           key={tab.id}
           className={`${styles.tab} ${activeTab === tab.id ? styles.active : ''}`}

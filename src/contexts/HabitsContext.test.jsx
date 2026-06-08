@@ -20,7 +20,12 @@ test('habits starts empty', async () => {
 test('addHabit adds to db and updates state', async () => {
   const { result } = renderHook(() => useHabits(), { wrapper })
   await act(async () => {
-    await result.current.addHabit({ name: 'Meditate', days: [1, 2, 3], time: null, notifyEnabled: false })
+    await result.current.addHabit({
+      name: 'Meditate',
+      days: [1, 2, 3],
+      time: null,
+      notifyEnabled: false,
+    })
   })
   expect(result.current.habits).toHaveLength(1)
   expect(result.current.habits[0].name).toBe('Meditate')
@@ -30,7 +35,12 @@ test('updateHabit updates name in state and db', async () => {
   const { result } = renderHook(() => useHabits(), { wrapper })
   let habit
   await act(async () => {
-    habit = await result.current.addHabit({ name: 'Run', days: [1], time: null, notifyEnabled: false })
+    habit = await result.current.addHabit({
+      name: 'Run',
+      days: [1],
+      time: null,
+      notifyEnabled: false,
+    })
   })
   await act(async () => {
     await result.current.updateHabit(habit.id, { name: 'Morning Run' })
@@ -42,7 +52,12 @@ test('deleteHabit removes from state and db', async () => {
   const { result } = renderHook(() => useHabits(), { wrapper })
   let habit
   await act(async () => {
-    habit = await result.current.addHabit({ name: 'Vitamins', days: [0, 1, 2, 3, 4, 5, 6], time: null, notifyEnabled: false })
+    habit = await result.current.addHabit({
+      name: 'Vitamins',
+      days: [0, 1, 2, 3, 4, 5, 6],
+      time: null,
+      notifyEnabled: false,
+    })
   })
   await act(async () => {
     await result.current.deleteHabit(habit.id)
@@ -54,12 +69,21 @@ test('toggleCompletion adds then removes a completion', async () => {
   const { result } = renderHook(() => useHabits(), { wrapper })
   let habit
   await act(async () => {
-    habit = await result.current.addHabit({ name: 'Run', days: [0, 1, 2, 3, 4, 5, 6], time: null, notifyEnabled: false })
+    habit = await result.current.addHabit({
+      name: 'Run',
+      days: [0, 1, 2, 3, 4, 5, 6],
+      time: null,
+      notifyEnabled: false,
+    })
   })
-  await act(async () => { await result.current.toggleCompletion(habit.id) })
+  await act(async () => {
+    await result.current.toggleCompletion(habit.id)
+  })
   expect(result.current.completions[habit.id]).toBe(true)
 
-  await act(async () => { await result.current.toggleCompletion(habit.id) })
+  await act(async () => {
+    await result.current.toggleCompletion(habit.id)
+  })
   expect(result.current.completions[habit.id]).toBeUndefined()
 })
 
@@ -67,7 +91,12 @@ test('getCompletedDates returns Set of dates for a habit', async () => {
   const { result } = renderHook(() => useHabits(), { wrapper })
   let habit
   await act(async () => {
-    habit = await result.current.addHabit({ name: 'Run', days: [0, 1, 2, 3, 4, 5, 6], time: null, notifyEnabled: false })
+    habit = await result.current.addHabit({
+      name: 'Run',
+      days: [0, 1, 2, 3, 4, 5, 6],
+      time: null,
+      notifyEnabled: false,
+    })
     await result.current.toggleCompletion(habit.id)
   })
   const dates = await result.current.getCompletedDates(habit.id)

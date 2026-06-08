@@ -16,11 +16,14 @@ export function HabitsProvider({ children }) {
 
   useEffect(() => {
     db.completions
-      .where('date').equals(selectedDate)
+      .where('date')
+      .equals(selectedDate)
       .toArray()
-      .then(rows => {
+      .then((rows) => {
         const map = {}
-        rows.forEach(r => { map[r.habitId] = true })
+        rows.forEach((r) => {
+          map[r.habitId] = true
+        })
         setCompletions(map)
       })
   }, [selectedDate])
@@ -28,14 +31,14 @@ export function HabitsProvider({ children }) {
   const addHabit = useCallback(async (data) => {
     const id = await db.habits.add({ ...data, createdAt: new Date().toISOString() })
     const habit = await db.habits.get(id)
-    setHabits(prev => [...prev, habit])
+    setHabits((prev) => [...prev, habit])
     scheduleHabitReminders([habit])
     return habit
   }, [])
 
   const updateHabit = useCallback(async (id, data) => {
     await db.habits.update(id, data)
-    setHabits(prev => prev.map(h => h.id === id ? { ...h, ...data } : h))
+    setHabits((prev) => prev.map((h) => (h.id === id ? { ...h, ...data } : h)))
   }, [])
 
   const deleteHabit = useCallback(async (id) => {
@@ -44,30 +47,54 @@ export function HabitsProvider({ children }) {
       await db.completions.where('habitId').equals(id).delete()
       await db.notification_prefs.delete(id)
     })
-    setHabits(prev => prev.filter(h => h.id !== id))
-    setCompletions(prev => { const next = { ...prev }; delete next[id]; return next })
+    setHabits((prev) => prev.filter((h) => h.id !== id))
+    setCompletions((prev) => {
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
   }, [])
 
-  const toggleCompletion = useCallback(async (habitId) => {
-    if (completions[habitId]) {
-      await db.completions.where('[habitId+date]').equals([habitId, selectedDate]).delete()
-      setCompletions(prev => { const next = { ...prev }; delete next[habitId]; return next })
-    } else {
-      await db.completions.add({ habitId, date: selectedDate, completedAt: new Date().toISOString() })
-      setCompletions(prev => ({ ...prev, [habitId]: true }))
-    }
-  }, [completions, selectedDate])
+  const toggleCompletion = useCallback(
+    async (habitId) => {
+      if (completions[habitId]) {
+        await db.completions.where('[habitId+date]').equals([habitId, selectedDate]).delete()
+        setCompletions((prev) => {
+          const next = { ...prev }
+          delete next[habitId]
+          return next
+        })
+      } else {
+        await db.completions.add({
+          habitId,
+          date: selectedDate,
+          completedAt: new Date().toISOString(),
+        })
+        setCompletions((prev) => ({ ...prev, [habitId]: true }))
+      }
+    },
+    [completions, selectedDate]
+  )
 
   const getCompletedDates = useCallback(async (habitId) => {
     const rows = await db.completions.where('habitId').equals(habitId).toArray()
-    return new Set(rows.map(r => r.date))
+    return new Set(rows.map((r) => r.date))
   }, [])
 
   return (
-    <HabitsContext.Provider value={{
-      habits, selectedDate, completions,
-      setSelectedDate, addHabit, updateHabit, deleteHabit, toggleCompletion, getCompletedDates,
-    }}>
+    <HabitsContext.Provider
+      value={{
+        habits,
+        selectedDate,
+        completions,
+        setSelectedDate,
+        addHabit,
+        updateHabit,
+        deleteHabit,
+        toggleCompletion,
+        getCompletedDates,
+      }}
+    >
       {children}
     </HabitsContext.Provider>
   )

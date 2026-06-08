@@ -25,14 +25,14 @@ export function DayStrip({ selectedDate, onSelectDate, completionsByDate = {} })
 
   return (
     <div className={styles.strip} ref={scrollRef}>
-      {days.map(d => {
+      {days.map((d) => {
         const dateStr = formatDate(d)
         const isFuture = dateStr > todayStr
         const isToday = dateStr === todayStr
         const isSelected = dateStr === selectedDate
         const comp = completionsByDate[dateStr]
-        const dotStatus = !comp || comp.total === 0 ? 'none'
-          : comp.done === comp.total ? 'full' : 'partial'
+        const dotStatus =
+          !comp || comp.total === 0 ? 'none' : comp.done === comp.total ? 'full' : 'partial'
 
         return (
           <button
@@ -44,7 +44,9 @@ export function DayStrip({ selectedDate, onSelectDate, completionsByDate = {} })
               isSelected && styles.selected,
               isFuture && styles.future,
               isToday && styles.today,
-            ].filter(Boolean).join(' ')}
+            ]
+              .filter(Boolean)
+              .join(' ')}
             onClick={() => onSelectDate(dateStr)}
           >
             <span className={styles.dayLetter}>{DAY_LETTERS[d.getDay()]}</span>

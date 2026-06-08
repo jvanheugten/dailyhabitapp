@@ -5,10 +5,16 @@ import { HabitsProvider } from '../contexts/HabitsContext'
 import { JournalProvider } from '../contexts/JournalContext'
 import { db } from '../db/db'
 
-beforeEach(async () => { await db.journal_entries.clear() })
+beforeEach(async () => {
+  await db.journal_entries.clear()
+})
 
 function Wrapper({ children }) {
-  return <HabitsProvider><JournalProvider>{children}</JournalProvider></HabitsProvider>
+  return (
+    <HabitsProvider>
+      <JournalProvider>{children}</JournalProvider>
+    </HabitsProvider>
+  )
 }
 
 test('shows empty state when no entries', async () => {
@@ -18,7 +24,12 @@ test('shows empty state when no entries', async () => {
 
 test('lists existing entries', async () => {
   const now = new Date().toISOString()
-  await db.journal_entries.add({ date: '2026-06-08', text: 'Great day', createdAt: now, updatedAt: now })
+  await db.journal_entries.add({
+    date: '2026-06-08',
+    text: 'Great day',
+    createdAt: now,
+    updatedAt: now,
+  })
   render(<Journal />, { wrapper: Wrapper })
   await screen.findByText(/great day/i)
 })
@@ -26,7 +37,12 @@ test('lists existing entries', async () => {
 test('tapping an entry opens edit view', async () => {
   const user = userEvent.setup()
   const now = new Date().toISOString()
-  await db.journal_entries.add({ date: '2026-06-08', text: 'My note', createdAt: now, updatedAt: now })
+  await db.journal_entries.add({
+    date: '2026-06-08',
+    text: 'My note',
+    createdAt: now,
+    updatedAt: now,
+  })
   render(<Journal />, { wrapper: Wrapper })
   const item = await screen.findByText(/my note/i)
   await user.click(item)

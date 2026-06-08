@@ -5,10 +5,17 @@ import { HabitsProvider } from '../contexts/HabitsContext'
 import { JournalProvider } from '../contexts/JournalContext'
 import { db } from '../db/db'
 
-beforeEach(async () => { await db.habits.clear(); await db.completions.clear() })
+beforeEach(async () => {
+  await db.habits.clear()
+  await db.completions.clear()
+})
 
 function Wrapper({ children }) {
-  return <HabitsProvider><JournalProvider>{children}</JournalProvider></HabitsProvider>
+  return (
+    <HabitsProvider>
+      <JournalProvider>{children}</JournalProvider>
+    </HabitsProvider>
+  )
 }
 
 test('shows empty state when no habits', async () => {
@@ -39,7 +46,13 @@ test('added habit appears in list', async () => {
 
 test('delete button shows confirmation', async () => {
   const user = userEvent.setup()
-  await db.habits.add({ name: 'Run', days: [1], time: null, notifyEnabled: false, createdAt: new Date().toISOString() })
+  await db.habits.add({
+    name: 'Run',
+    days: [1],
+    time: null,
+    notifyEnabled: false,
+    createdAt: new Date().toISOString(),
+  })
   render(<Habits />, { wrapper: Wrapper })
   await screen.findByText('Run')
   await user.click(screen.getByLabelText(/delete run/i))

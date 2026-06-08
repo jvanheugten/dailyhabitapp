@@ -10,23 +10,38 @@ export function HabitForm({ habit, onSave, onClose }) {
   const [error, setError] = useState('')
 
   function toggleDay(d) {
-    setDays(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d].sort((a, b) => a - b))
+    setDays((prev) =>
+      prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d].sort((a, b) => a - b)
+    )
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!name.trim()) { setError('Name is required'); return }
-    if (days.length === 0) { setError('Select at least one day'); return }
+    if (!name.trim()) {
+      setError('Name is required')
+      return
+    }
+    if (days.length === 0) {
+      setError('Select at least one day')
+      return
+    }
     await onSave({ name: name.trim(), days, time: time || null, notifyEnabled })
     onClose()
   }
 
   return (
-    <div className={styles.overlay} role="dialog" aria-modal="true" aria-label={habit ? 'Edit Habit' : 'New Habit'}>
+    <div
+      className={styles.overlay}
+      role="dialog"
+      aria-modal="true"
+      aria-label={habit ? 'Edit Habit' : 'New Habit'}
+    >
       <div className={styles.sheet}>
         <div className={styles.header}>
           <h2>{habit ? 'Edit Habit' : 'New Habit'}</h2>
-          <button onClick={onClose} aria-label="Close form">✕</button>
+          <button onClick={onClose} aria-label="Close form">
+            ✕
+          </button>
         </div>
         <form onSubmit={handleSubmit} className={styles.form}>
           <label className={styles.label}>
@@ -34,7 +49,7 @@ export function HabitForm({ habit, onSave, onClose }) {
             <input
               className={styles.input}
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Morning run"
               autoFocus
             />
@@ -60,7 +75,7 @@ export function HabitForm({ habit, onSave, onClose }) {
               type="time"
               className={styles.input}
               value={time}
-              onChange={e => {
+              onChange={(e) => {
                 setTime(e.target.value)
                 if (!e.target.value) setNotifyEnabled(false)
               }}
@@ -84,8 +99,14 @@ export function HabitForm({ habit, onSave, onClose }) {
               />
             </label>
           )}
-          {error && <p className={styles.error} role="alert">{error}</p>}
-          <button type="submit" className={styles.saveBtn}>Save</button>
+          {error && (
+            <p className={styles.error} role="alert">
+              {error}
+            </p>
+          )}
+          <button type="submit" className={styles.saveBtn}>
+            Save
+          </button>
         </form>
       </div>
     </div>

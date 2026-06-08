@@ -14,7 +14,7 @@ test('renders today as selected by default', () => {
 test('future day buttons are disabled', () => {
   render(<DayStrip selectedDate={today()} onSelectDate={() => {}} />)
   const buttons = screen.getAllByRole('button')
-  const futureBtns = buttons.filter(b => b.disabled)
+  const futureBtns = buttons.filter((b) => b.disabled)
   expect(futureBtns.length).toBeGreaterThan(0)
 })
 
@@ -24,7 +24,7 @@ test('clicking a past day calls onSelectDate', async () => {
   render(<DayStrip selectedDate={today()} onSelectDate={onSelect} />)
   const buttons = screen.getAllByRole('button')
   // First button is the oldest past day — enabled, not future
-  const pastDays = buttons.filter(b => !b.disabled)
+  const pastDays = buttons.filter((b) => !b.disabled)
   if (pastDays.length > 1) {
     await user.click(pastDays[0])
     expect(onSelect).toHaveBeenCalled()

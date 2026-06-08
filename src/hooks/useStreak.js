@@ -8,7 +8,7 @@ export function useStreak(habit) {
 
   useEffect(() => {
     if (!habit?.id) return
-    getCompletedDates(habit.id).then(dates => {
+    getCompletedDates(habit.id).then((dates) => {
       setStreak(computeStreak(habit, dates))
     })
   }, [habit, getCompletedDates, completions])

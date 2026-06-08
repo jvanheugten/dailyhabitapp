@@ -4,9 +4,12 @@ import { HabitRow } from './HabitRow'
 import { HabitsProvider } from '../contexts/HabitsContext'
 import { db } from '../db/db'
 
-beforeEach(async () => { await db.habits.clear(); await db.completions.clear() })
+beforeEach(async () => {
+  await db.habits.clear()
+  await db.completions.clear()
+})
 
-const habit = { id: 1, name: 'Morning run', days: [1,2,3,4,5], time: null }
+const habit = { id: 1, name: 'Morning run', days: [1, 2, 3, 4, 5], time: null }
 
 const wrapper = ({ children }) => <HabitsProvider>{children}</HabitsProvider>
 

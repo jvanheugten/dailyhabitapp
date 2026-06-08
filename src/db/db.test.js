@@ -27,7 +27,11 @@ test('can add and retrieve a habit', async () => {
 })
 
 test('can add a completion and look it up by [habitId+date]', async () => {
-  await db.completions.add({ habitId: 1, date: '2026-06-08', completedAt: new Date().toISOString() })
+  await db.completions.add({
+    habitId: 1,
+    date: '2026-06-08',
+    completedAt: new Date().toISOString(),
+  })
   const rows = await db.completions.where('[habitId+date]').equals([1, '2026-06-08']).toArray()
   expect(rows).toHaveLength(1)
 })

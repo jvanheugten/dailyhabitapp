@@ -14,7 +14,7 @@ export function scheduleHabitReminders(habits) {
   const now = new Date()
   const todayDay = now.getDay()
 
-  habits.forEach(habit => {
+  habits.forEach((habit) => {
     if (!habit.notifyEnabled) return
     if (!habit.time) return
     if (!habit.days.includes(todayDay)) return

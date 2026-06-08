@@ -1,5 +1,5 @@
 {
-  "name": "vite-scaffold",
+  "name": "daily-habit-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,7 +9,15 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "prepare": "husky",
+    "format": "prettier --write 'src/**/*.{js,jsx}'"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "dependencies": {
     "dexie": "^4.4.3",
@@ -31,7 +39,10 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "fake-indexeddb": "^6.2.5",
     "globals": "^17.6.0",
+    "husky": "^9.1.7",
     "jsdom": "^29.1.1",
+    "lint-staged": "^17.0.7",
+    "prettier": "^3.8.3",
     "vite": "^8.0.12",
     "vitest": "^4.1.8"
   }
