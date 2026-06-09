@@ -91,7 +91,7 @@ export function disconnect(token) {
 
 export async function findBackupFile(token) {
   const res = await driveRequest(
-    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D'${BACKUP_FILENAME}'&fields=files(id)`,
+    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D'${encodeURIComponent(BACKUP_FILENAME)}'&fields=files(id)`,
     { headers: { Authorization: `Bearer ${token}` } }
   )
   const data = await res.json()

@@ -156,7 +156,7 @@ export function SyncProvider({ children }) {
           if (pendingRestore.completions?.length)
             await db.completions.bulkAdd(pendingRestore.completions)
           if (pendingRestore.journal_entries?.length)
-            await db.journal_entries.bulkAdd(pendingRestore.journal_entries)
+            await db.journal_entries.bulkPut(pendingRestore.journal_entries)
           if (pendingRestore.notification_prefs?.length)
             await db.notification_prefs.bulkAdd(pendingRestore.notification_prefs)
           if (pendingRestore.symptom_types?.length)
