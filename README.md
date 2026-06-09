@@ -1,16 +1,52 @@
-# React + Vite
+# Daily Habit App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A PWA for daily habit tracking, journaling, and health monitoring. Runs entirely in the browser — all data stored locally in IndexedDB.
 
-Currently, two official plugins are available:
+**Live:** https://jazman.github.io/dailyhabitapp/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **Habits** — track daily habits with completion streaks
+- **Journal** — daily journal entries
+- **Health** — symptom logging with an interactive body map, vital sign tracking, and Google Fit import
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech stack
 
-## Expanding the ESLint configuration
+React 18 · Vite · Dexie.js (IndexedDB) · CSS Modules · Vitest · GitHub Pages
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Development
+
+```bash
+npm install
+npm run dev        # dev server at http://localhost:5173
+npm test           # run test suite
+npm run build      # production build
+```
+
+## Google Fit integration
+
+Google Fit sync imports steps, calories, active minutes, heart rate, sleep, weight, blood pressure, blood glucose, and oxygen saturation into the Health tab.
+
+### Setup
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/) and create a project
+2. Enable the **Fitness API** (APIs & Services → Enable APIs)
+3. Create an **OAuth 2.0 Client ID** (Credentials → Create → Web application)
+4. Add authorised JavaScript origins:
+   - `http://localhost:5173` (local dev)
+   - `https://<your-username>.github.io` (production)
+5. Create `.env.local` in the project root:
+   ```
+   VITE_GOOGLE_CLIENT_ID=your_client_id_here
+   ```
+6. Restart the dev server — the **Connect Google Fit** button will appear in the Health tab
+
+Without `VITE_GOOGLE_CLIENT_ID` set, the Health tab shows a configuration hint and the sync button is hidden.
+
+### Scopes requested
+
+`fitness.activity.read` · `fitness.body.read` · `fitness.heart_rate.read` · `fitness.blood_pressure.read` · `fitness.blood_glucose.read` · `fitness.oxygen_saturation.read` · `fitness.sleep.read`
+
+## Deployment
+
+Pushes to `master` deploy automatically to GitHub Pages via the existing workflow. The `base` path in `vite.config.js` is set to `/dailyhabitapp/`.
