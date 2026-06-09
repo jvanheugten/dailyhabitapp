@@ -1,0 +1,66 @@
+.screen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  overflow-y: auto;
+}
+
+.rangeBar {
+  display: flex;
+  gap: 6px;
+  padding: 14px 16px 10px;
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.chip {
+  padding: 5px 13px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  transition: all 0.15s;
+}
+
+.chip:hover { border-color: var(--accent); color: var(--text); }
+
+.activeChip {
+  background: var(--accent-dim);
+  border-color: rgba(61, 142, 240, 0.45);
+  color: var(--accent);
+}
+
+.customPicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dateInput {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 13px;
+  color: var(--text);
+  color-scheme: dark;
+}
+
+.dateSep { font-size: 13px; color: var(--text-dim); }
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 20px 16px calc(32px + env(safe-area-inset-bottom, 0));
+}

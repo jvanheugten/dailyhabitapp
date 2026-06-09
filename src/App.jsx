@@ -7,6 +7,7 @@ import { Today } from './screens/Today'
 import { Habits } from './screens/Habits'
 import { Journal } from './screens/Journal'
 import { Health } from './screens/Health'
+import { Stats } from './screens/Stats'
 import { BottomNav } from './components/BottomNav'
 import styles from './App.module.css'
 
@@ -23,6 +24,7 @@ export default function App() {
                 {activeTab === 'habits' && <Habits />}
                 {activeTab === 'journal' && <Journal />}
                 {activeTab === 'health' && <Health />}
+                {activeTab === 'stats' && <Stats />}
               </main>
               <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
