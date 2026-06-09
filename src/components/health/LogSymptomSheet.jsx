@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useHealth } from '../../contexts/HealthContext'
-import { BodyMap } from './BodyMap'
-import { BodyRegion } from './BodyRegion'
+import { RegionPicker } from './RegionPicker'
+import { BodyViewer3D } from './BodyViewer3D'
+import { PaintControls } from './PaintControls'
 import { IntensityPicker } from './IntensityPicker'
+import { intensityColor } from '../../utils/intensity'
 import styles from './LogSymptomSheet.module.css'
 
 const PAIN_TYPES = ['Throbbing', 'Sharp', 'Dull', 'Burning', 'Aching']
@@ -13,11 +15,12 @@ function toDateTimeLocal(date) {
 }
 
 export function LogSymptomSheet({ onClose }) {
-  const { symptomTypes, addSymptomType, addSymptom, symptoms } = useHealth()
+  const { symptomTypes, addSymptomType, addSymptom } = useHealth()
   const [step, setStep] = useState(1)
   const [region, setRegion] = useState(null)
-  const [view, setView] = useState('front')
-  const [pathsByView, setPathsByView] = useState({})
+  const [strokes, setStrokes] = useState([])
+  const [isPainting, setIsPainting] = useState(false)
+  const [brushSize, setBrushSize] = useState(12)
   const [intensity, setIntensity] = useState(3)
   const [selectedType, setSelectedType] = useState(null)
   const [newTypeName, setNewTypeName] = useState('')
@@ -25,13 +28,11 @@ export function LogSymptomSheet({ onClose }) {
   const [notes, setNotes] = useState('')
   const [timestamp, setTimestamp] = useState(() => toDateTimeLocal(new Date()))
 
+  const bodyViewerRef = useRef(null)
+
   function handleRegionSelect(r) {
     setRegion(r)
     setStep(2)
-  }
-
-  function handlePathsChange(newPaths) {
-    setPathsByView((prev) => ({ ...prev, [view]: newPaths }))
   }
 
   async function handleSave() {
@@ -42,18 +43,13 @@ export function LogSymptomSheet({ onClose }) {
     }
     if (!typeId) return
 
-    const allPaths = Object.entries(pathsByView).flatMap(([v, paths]) =>
-      paths.map((p) => ({ ...p, view: v }))
-    )
-
     await addSymptom({
       symptom_type_id: typeId,
       region,
-      view,
-      svg_paths: JSON.stringify(allPaths),
       intensity,
       pain_type: JSON.stringify(painTypes),
       notes,
+      uv_strokes: JSON.stringify(strokes),
       timestamp: new Date(timestamp).toISOString(),
     })
     onClose()
@@ -62,6 +58,8 @@ export function LogSymptomSheet({ onClose }) {
   function togglePainType(pt) {
     setPainTypes((prev) => (prev.includes(pt) ? prev.filter((x) => x !== pt) : [...prev, pt]))
   }
+
+  const paintColor = intensityColor(intensity)
 
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Log Symptom">
@@ -84,30 +82,40 @@ export function LogSymptomSheet({ onClose }) {
           ))}
         </div>
 
-        {step === 1 && (
-          <div className={styles.body}>
-            <p className={styles.hint}>Tap a body region to locate the symptom</p>
-            <BodyMap onRegionSelect={handleRegionSelect} symptoms={symptoms} />
-          </div>
-        )}
+        {step === 1 && <RegionPicker onSelect={handleRegionSelect} />}
 
         {step === 2 && (
-          <div className={styles.body}>
-            <BodyRegion
-              region={region}
-              view={view}
-              onViewChange={setView}
-              paths={pathsByView[view] ?? []}
-              onPathsChange={handlePathsChange}
-              intensity={intensity}
-            />
-            <div className={styles.section}>
+          <div
+            className={styles.body}
+            style={{ display: 'flex', flexDirection: 'column', flex: 1, padding: 0 }}
+          >
+            <div className={styles.section} style={{ padding: '10px 16px 0' }}>
               <span className={styles.sectionLabel}>Intensity</span>
               <IntensityPicker value={intensity} onChange={setIntensity} />
             </div>
-            <button className={styles.nextBtn} onClick={() => setStep(3)}>
-              Next
-            </button>
+            <BodyViewer3D
+              ref={bodyViewerRef}
+              mode="log"
+              region={region}
+              strokes={strokes}
+              onStrokesChange={setStrokes}
+              brushSize={brushSize}
+              paintColor={paintColor}
+              isPainting={isPainting}
+            />
+            <PaintControls
+              isPainting={isPainting}
+              onModeChange={setIsPainting}
+              brushSize={brushSize}
+              onBrushSizeChange={setBrushSize}
+              onUndo={() => bodyViewerRef.current?.undo()}
+              onClear={() => bodyViewerRef.current?.clear()}
+            />
+            <div style={{ padding: '10px 16px' }}>
+              <button className={styles.nextBtn} onClick={() => setStep(3)}>
+                Next
+              </button>
+            </div>
           </div>
         )}
 
@@ -166,7 +174,7 @@ export function LogSymptomSheet({ onClose }) {
               />
             </div>
             <div className={styles.section}>
-              <span className={styles.sectionLabel}>Date & time</span>
+              <span className={styles.sectionLabel}>Date &amp; time</span>
               <input
                 type="datetime-local"
                 className={styles.input}
