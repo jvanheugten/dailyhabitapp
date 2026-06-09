@@ -1,12 +1,17 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#111"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <rect width="200" height="300" fill="#070c16"/>
   
-      <ellipse cx="100" cy="28" rx="22" ry="25" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-      <path d="M68,55 L68,120 Q100,128 132,120 L132,55 Q116,48 100,48 Q84,48 68,55Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-      <path d="M68,120 L65,150 Q100,158 135,150 L132,120 Q100,128 68,120Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-      <path d="M65,150 L60,200 Q72,205 82,200 L85,150Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-      <path d="M135,150 L140,200 Q128,205 118,200 L115,150Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-      <path d="M45,56 L38,100 Q44,106 52,102 L60,56Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-      <path d="M155,56 L162,100 Q156,106 148,102 L140,56Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Full Body · back</text>
+  <ellipse cx="100" cy="30" rx="22" ry="26" fill="#070c16" stroke="#2a4a65" stroke-width="2.2"/>
+  <path d="M68,58 L68,125 Q100,132 132,125 L132,58 Q116,50 100,50 Q84,50 68,58 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2.2"/>
+  <path d="M68,125 L65,158 Q100,165 135,158 L132,125 Q100,132 68,125 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2.2"/>
+  <path d="M45,58 L38,108 Q44,114 52,110 L60,58 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M155,58 L162,108 Q156,114 148,110 L140,58 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M72,158 L68,230 Q80,236 88,232 L90,158 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M128,158 L132,230 Q120,236 112,232 L110,158 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M68,232 Q74,260 78,278 Q88,284 92,278 L92,232" fill="#070c16" stroke="#2a4a65" stroke-width="1.8"/>
+  <path d="M132,232 Q126,260 122,278 Q112,284 108,278 L108,232" fill="#070c16" stroke="#2a4a65" stroke-width="1.8"/>
+  <line x1="100" y1="52" x2="100" y2="162" stroke="#2a4a65" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <path d="M72,65 C64,75 62,90 68,100 C74,108 88,106 92,94 Z" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <path d="M128,65 C136,75 138,90 132,100 C126,108 112,106 108,94 Z" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  
 </svg>

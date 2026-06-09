@@ -1,5 +1,11 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#111"/>
-  <rect x="40" y="30" width="120" height="140" rx="12" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Back · right</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <rect width="200" height="300" fill="#070c16"/>
+  
+  <path d="M60,10 L125,10 Q148,15 150,50 L148,258 Q142,275 125,278 L60,278 Q42,275 40,258 L38,50 Q40,15 60,10 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2.5"/>
+  <path d="M138,35 C144,47 146,63 140,75 C134,85 120,83 116,71 Z" fill="none" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M135,92 Q145,115 142,143" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+  <path d="M138,115 Q148,138 146,165" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <path d="M140,138 Q150,162 148,188" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <line x1="95" y1="12" x2="95" y2="272" stroke="#1a3050" stroke-width="1.2" stroke-dasharray="4,3"/>
+  
 </svg>

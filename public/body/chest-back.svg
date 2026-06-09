@@ -1,5 +1,13 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#111"/>
-  <path d="M30,40 L170,40 L155,160 L45,160Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Chest · back</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <rect width="200" height="300" fill="#070c16"/>
+  
+  <path d="M45,10 L155,10 Q175,12 178,40 L178,200 Q175,215 155,218 L45,218 Q25,215 22,200 L22,40 Q25,12 45,10 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2.5"/>
+  <line x1="100" y1="15" x2="100" y2="210" stroke="#2a4a65" stroke-width="1.8" stroke-dasharray="4,3"/>
+  <path d="M35,42 C28,52 26,68 30,78 C36,85 48,82 52,72 Z" fill="none" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M165,42 C172,52 174,68 170,78 C164,85 152,82 148,72 Z" fill="none" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M40,100 Q30,120 32,145" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+  <path d="M38,122 Q28,142 30,165" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <path d="M160,100 Q170,120 168,145" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+  <path d="M162,122 Q172,142 170,165" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  
 </svg>

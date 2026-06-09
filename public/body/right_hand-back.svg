@@ -1,5 +1,12 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#111"/>
-  <path d="M60,160 L60,80 Q60,30 100,30 Q140,30 140,80 L140,160 Q140,180 100,190 Q60,180 60,160Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Right Hand · back</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <rect width="200" height="300" fill="#070c16"/>
+  
+  <g transform="translate(200,0) scale(-1,1)">
+    <path d="M55,8 Q55,8 60,100 Q62,115 70,120 L72,250 Q74,265 100,268 Q126,265 128,250 L130,120 Q138,115 140,100 Q145,8 145,8 Q130,5 118,8 L115,85 Q110,90 100,90 Q90,90 85,85 L82,8 Q70,5 55,8 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2.2"/>
+  <line x1="85" y1="8" x2="82" y2="85" stroke="#1a3050" stroke-width="1.2"/>
+  <line x1="100" y1="8" x2="100" y2="88" stroke="#1a3050" stroke-width="1.2"/>
+  <line x1="115" y1="8" x2="118" y2="85" stroke="#1a3050" stroke-width="1.2"/>
+  <path d="M68,160 Q100,168 132,160" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <path d="M68,200 Q100,208 132,200" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  </g>
 </svg>

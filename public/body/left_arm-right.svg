@@ -1,5 +1,9 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#111"/>
-  <rect x="70" y="20" width="60" height="160" rx="28" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Left Arm · right</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <rect width="200" height="300" fill="#070c16"/>
+  
+  <path d="M72,8 L125,8 Q140,12 142,40 L140,205 Q136,228 125,242 Q108,272 100,273 Q90,272 75,242 Q65,228 60,205 L58,40 Q60,12 72,8 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2.5"/>
+  <path d="M60,95 Q50,122 54,150" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+  <path d="M140,95 Q150,122 146,150" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+  <ellipse cx="100" cy="165" rx="38" ry="16" fill="none" stroke="#2a4a65" stroke-width="1.8"/>
+  
 </svg>

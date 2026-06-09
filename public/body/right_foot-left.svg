@@ -1,5 +1,10 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#111"/>
-  <path d="M30,80 Q30,20 100,20 Q150,20 170,60 L170,140 Q170,170 130,175 L40,175 Q20,170 20,140 L20,100 Q20,80 30,80Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Right Foot · left</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <rect width="200" height="300" fill="#070c16"/>
+  
+  <g transform="translate(200,0) scale(-1,1)">
+    <path d="M170,20 Q125,15 100,18 Q70,15 35,25 Q20,35 20,65 L22,175 Q25,200 35,218 Q52,248 70,258 Q88,265 105,260 Q122,253 135,240 Q155,220 165,195 L175,165 L178,80 Q178,25 170,20 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2.5"/>
+  <path d="M170,20 Q100,12 35,25" fill="none" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M135,238 Q118,258 100,262" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+  <path d="M178,145 Q180,168 175,188" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+  </g>
 </svg>

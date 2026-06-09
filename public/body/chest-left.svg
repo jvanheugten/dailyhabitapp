@@ -1,5 +1,10 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#111"/>
-  <path d="M30,40 L170,40 L155,160 L45,160Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Chest · left</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <rect width="200" height="300" fill="#070c16"/>
+  
+  <path d="M80,10 L140,10 Q158,15 160,50 L160,200 Q158,218 140,220 L80,220 Q62,218 60,200 L60,50 Q62,15 80,10 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2.5"/>
+  <path d="M65,55 Q55,75 57,100" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+  <path d="M63,78 Q53,98 55,122" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <path d="M63,100 Q53,118 55,142" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <ellipse cx="118" cy="55" rx="28" ry="32" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  
 </svg>

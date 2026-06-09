@@ -1,5 +1,17 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#111"/>
-  <path d="M30,40 L170,40 L155,160 L45,160Z" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Chest · front</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <rect width="200" height="300" fill="#070c16"/>
+  
+  <path d="M45,10 L155,10 Q175,12 178,40 L178,200 Q175,215 155,218 L45,218 Q25,215 22,200 L22,40 Q25,12 45,10 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2.5"/>
+  <line x1="100" y1="15" x2="100" y2="210" stroke="#1a3050" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <path d="M100,20 L48,38" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M100,20 L152,38" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M40,55 Q30,75 32,100" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+  <path d="M38,78 Q28,98 30,122" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <path d="M38,100 Q28,118 30,142" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <path d="M160,55 Q170,75 168,100" fill="none" stroke="#1a3050" stroke-width="1.5"/>
+  <path d="M162,78 Q172,98 170,122" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <path d="M162,100 Q172,118 170,142" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <ellipse cx="72" cy="52" rx="20" ry="25" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <ellipse cx="128" cy="52" rx="20" ry="25" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  
 </svg>

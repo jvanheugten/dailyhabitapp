@@ -1,5 +1,10 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#111"/>
-  <ellipse cx="100" cy="100" rx="70" ry="85" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Head · left</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <rect width="200" height="300" fill="#070c16"/>
+  
+  <path d="M80,40 Q50,45 38,80 Q30,110 35,145 Q40,175 60,195 Q80,210 100,208 Q130,205 148,188 Q165,170 165,145 Q165,100 148,72 Q132,45 110,38 Z" fill="#070c16" stroke="#2a4a65" stroke-width="2.5"/>
+  <ellipse cx="138" cy="130" rx="20" ry="30" fill="#070c16" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M95,100 L85,135 Q100,143 112,135 L105,100" fill="none" stroke="#2a4a65" stroke-width="1.8"/>
+  <path d="M78,165 Q100,178 118,165" fill="none" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M95,205 L88,270 Q100,278 112,270 L105,205" fill="none" stroke="#2a4a65" stroke-width="2"/>
+  
 </svg>

@@ -1,5 +1,15 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#111"/>
-  <ellipse cx="100" cy="100" rx="70" ry="85" fill="none" stroke="#4a4a4a" stroke-width="2"/>
-  <text x="100" y="195" text-anchor="middle" font-size="10" fill="#444" font-family="system-ui">Head · front</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <rect width="200" height="300" fill="#070c16"/>
+  
+  <ellipse cx="100" cy="118" rx="68" ry="84" fill="#070c16" stroke="#2a4a65" stroke-width="2.5"/>
+  <ellipse cx="30" cy="122" rx="9" ry="15" fill="#070c16" stroke="#2a4a65" stroke-width="2"/>
+  <ellipse cx="170" cy="122" rx="9" ry="15" fill="#070c16" stroke="#2a4a65" stroke-width="2"/>
+  <ellipse cx="76" cy="102" rx="14" ry="9" fill="none" stroke="#2a4a65" stroke-width="2"/>
+  <ellipse cx="124" cy="102" rx="14" ry="9" fill="none" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M94,115 L86,148 Q100,156 114,148 L106,115" fill="none" stroke="#2a4a65" stroke-width="1.8"/>
+  <path d="M78,170 Q100,184 122,170" fill="none" stroke="#2a4a65" stroke-width="2"/>
+  <path d="M42,155 Q100,218 158,155" fill="none" stroke="#1a3050" stroke-width="1.2"/>
+  <path d="M82,198 L78,270 Q100,278 122,270 L118,198" fill="none" stroke="#2a4a65" stroke-width="2"/>
+  <line x1="100" y1="202" x2="100" y2="268" stroke="#1a3050" stroke-width="1" stroke-dasharray="3,3"/>
+  
 </svg>
