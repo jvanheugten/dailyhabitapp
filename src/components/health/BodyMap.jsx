@@ -61,7 +61,7 @@ function Shape({ region, fill, fillOpacity, stroke, strokeWidth, ...rest }) {
   return <path d={region.d} {...shared} />
 }
 
-export function BodyMap({ onRegionSelect, symptoms = [] }) {
+export function BodyMap({ onRegionSelect, symptoms = [], readOnly = false, regionColors = {} }) {
   const [view, setView] = useState('front')
   const [hovered, setHovered] = useState(null)
 
@@ -108,20 +108,36 @@ export function BodyMap({ onRegionSelect, symptoms = [] }) {
               <Shape
                 key={`hit-${r.id}`}
                 region={r}
-                fill={icolor ?? (isHovered ? 'rgba(61,142,240,0.22)' : 'transparent')}
-                fillOpacity={intensity ? 0.45 : 1}
-                stroke={icolor ? icolor : isHovered ? 'rgba(61,142,240,0.7)' : 'transparent'}
-                strokeWidth={isHovered || intensity ? 1 : 0}
-                role="button"
-                tabIndex={0}
-                aria-label={`Tap ${r.label}`}
-                style={{ cursor: 'pointer', outline: 'none' }}
-                onClick={() => onRegionSelect(r.id)}
-                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onRegionSelect(r.id)}
-                onMouseEnter={() => setHovered(r.id)}
-                onMouseLeave={() => setHovered(null)}
-                onFocus={() => setHovered(r.id)}
-                onBlur={() => setHovered(null)}
+                fill={
+                  regionColors[r.id] ??
+                  icolor ??
+                  (isHovered && !readOnly ? 'rgba(61,142,240,0.22)' : 'transparent')
+                }
+                fillOpacity={regionColors[r.id] ? 0.9 : intensity ? 0.45 : 1}
+                stroke={
+                  regionColors[r.id]
+                    ? regionColors[r.id]
+                    : icolor
+                      ? icolor
+                      : isHovered && !readOnly
+                        ? 'rgba(61,142,240,0.7)'
+                        : 'transparent'
+                }
+                strokeWidth={isHovered || intensity || regionColors[r.id] ? 1 : 0}
+                role={readOnly ? undefined : 'button'}
+                tabIndex={readOnly ? undefined : 0}
+                aria-label={readOnly ? undefined : `Tap ${r.label}`}
+                style={{ cursor: readOnly ? 'default' : 'pointer', outline: 'none' }}
+                onClick={readOnly ? undefined : () => onRegionSelect(r.id)}
+                onKeyDown={
+                  readOnly
+                    ? undefined
+                    : (e) => (e.key === 'Enter' || e.key === ' ') && onRegionSelect(r.id)
+                }
+                onMouseEnter={readOnly ? undefined : () => setHovered(r.id)}
+                onMouseLeave={readOnly ? undefined : () => setHovered(null)}
+                onFocus={readOnly ? undefined : () => setHovered(r.id)}
+                onBlur={readOnly ? undefined : () => setHovered(null)}
               />
             )
           })}
