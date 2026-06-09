@@ -10,6 +10,7 @@ import {
 } from 'recharts'
 import { BodyMap } from '../health/BodyMap'
 import { calcSymptomFrequency, calcBodyMapIntensity } from '../../utils/statsHelpers'
+import { SymptomHeatmap } from './SymptomHeatmap'
 import styles from './HealthStats.module.css'
 
 function countToColor(count) {
@@ -85,33 +86,36 @@ export function HealthStats({ symptoms, symptomTypes, vitalTypes, vitalEntries, 
       ) : (
         <>
           {freq.length > 0 && (
-            <div className={styles.card}>
-              <span className={styles.cardLabel}>Symptom frequency</span>
-              <div className={styles.freqRow}>
-                <div className={styles.bodyMapWrap}>
-                  <BodyMap
-                    onRegionSelect={() => {}}
-                    symptoms={[]}
-                    readOnly
-                    regionColors={regionColors}
-                  />
-                </div>
-                <div className={styles.freqList}>
-                  {freq.map((f) => (
-                    <div key={f.name} className={styles.freqItem}>
-                      <span className={styles.freqName}>{f.name}</span>
-                      <div className={styles.freqTrack}>
-                        <div
-                          className={styles.freqFill}
-                          style={{ width: `${(f.count / maxFreq) * 100}%` }}
-                        />
+            <>
+              <div className={styles.card}>
+                <span className={styles.cardLabel}>Symptom frequency</span>
+                <div className={styles.freqRow}>
+                  <div className={styles.bodyMapWrap}>
+                    <BodyMap
+                      onRegionSelect={() => {}}
+                      symptoms={[]}
+                      readOnly
+                      regionColors={regionColors}
+                    />
+                  </div>
+                  <div className={styles.freqList}>
+                    {freq.map((f) => (
+                      <div key={f.name} className={styles.freqItem}>
+                        <span className={styles.freqName}>{f.name}</span>
+                        <div className={styles.freqTrack}>
+                          <div
+                            className={styles.freqFill}
+                            style={{ width: `${(f.count / maxFreq) * 100}%` }}
+                          />
+                        </div>
+                        <span className={styles.freqCount}>{f.count}</span>
                       </div>
-                      <span className={styles.freqCount}>{f.count}</span>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+              <SymptomHeatmap symptoms={symptoms} symptomTypes={symptomTypes} range={range} />
+            </>
           )}
 
           {vitalCharts.map(({ vt, data }) => (

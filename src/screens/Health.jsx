@@ -204,6 +204,7 @@ export function Health() {
                       minute: '2-digit',
                     })}
                   </span>
+                  {item.notes ? <span className={styles.historyNotes}>{item.notes}</span> : null}
                 </div>
                 <button
                   className={styles.deleteBtn}

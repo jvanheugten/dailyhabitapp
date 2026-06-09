@@ -109,6 +109,21 @@ export function calcSymptomFrequency(symptoms, symptomTypes, range) {
     .sort((a, b) => b.count - a.count)
 }
 
+// Returns { [dateStr]: { count, maxIntensity } } for one symptom type in range
+export function calcSymptomHeatmapData(symptoms, symptomTypeId, range) {
+  const out = {}
+  for (const s of symptoms) {
+    if (s.symptom_type_id !== symptomTypeId) continue
+    const d = new Date(s.timestamp)
+    if (d < range.start || d > range.end) continue
+    const key = s.timestamp.slice(0, 10)
+    if (!out[key]) out[key] = { count: 0, maxIntensity: 0 }
+    out[key].count++
+    out[key].maxIntensity = Math.max(out[key].maxIntensity, s.intensity ?? 1)
+  }
+  return out
+}
+
 // Returns { [regionId]: count } for symptoms in range
 export function calcBodyMapIntensity(symptoms, range) {
   const counts = {}

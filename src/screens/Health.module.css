@@ -205,6 +205,14 @@
   letter-spacing: 0.02em;
 }
 
+.historyNotes {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 /* ── Delete button ───────────────────────────────────── */
 .deleteBtn {
   flex-shrink: 0;
