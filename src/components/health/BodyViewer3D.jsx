@@ -116,6 +116,9 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
     const paintCanvas = document.createElement('canvas')
     paintCanvas.width = CANVAS_SIZE
     paintCanvas.height = CANVAS_SIZE
+    const initCtx = paintCanvas.getContext('2d')
+    initCtx.fillStyle = '#ffffff'
+    initCtx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE)
     canvasRef.current = paintCanvas
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
@@ -181,7 +184,7 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
         const center = box.getCenter(new THREE.Vector3())
         const size = box.getSize(new THREE.Vector3())
         const maxDim = Math.max(size.x, size.y, size.z)
-         
+
         console.log('[BodyViewer3D] model bounds:', { center, size, maxDim })
         const camDist = (maxDim / 2 / Math.tan((cam.fov * Math.PI) / 180 / 2)) * 1.5
         cam.near = maxDim / 100
@@ -289,7 +292,8 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
     if (mode !== 'stats' || !canvasRef.current || !textureRef.current) return
     const ctx = canvasRef.current.getContext('2d')
     if (!ctx) return
-    ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE)
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE)
     for (const [name, { count, maxIntensity }] of Object.entries(regionData)) {
       const centroid = REGION_UV_CENTROID[name]
       if (!centroid) continue

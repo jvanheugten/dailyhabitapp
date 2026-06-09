@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react'
 
 export function replayStrokes(ctx, strokes, W, H) {
-  ctx.clearRect(0, 0, W, H)
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, W, H)
   for (const { uvPoints, brushSize, color } of strokes) {
     ctx.fillStyle = color
     ctx.globalAlpha = 0.4
@@ -63,7 +64,8 @@ export function useBodyPainter({ canvasRef, textureRef, brushSize, color }) {
     const canvas = canvasRef.current
     if (canvas) {
       const ctx = canvas.getContext('2d')
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
       if (textureRef.current) textureRef.current.needsUpdate = true
     }
   }
