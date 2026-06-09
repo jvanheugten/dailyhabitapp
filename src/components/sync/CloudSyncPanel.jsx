@@ -54,8 +54,11 @@ export function CloudSyncPanel() {
 
   const handleConnect = useCallback(async () => {
     setConnecting(true)
-    await connect()
-    setConnecting(false)
+    try {
+      await connect()
+    } finally {
+      setConnecting(false)
+    }
   }, [connect])
 
   const handleExport = useCallback(async () => {
