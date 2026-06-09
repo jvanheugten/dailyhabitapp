@@ -134,6 +134,20 @@ export function calcBodyMapIntensity(symptoms, range) {
   return counts
 }
 
+// Returns { [regionName]: { count, maxIntensity } } for symptoms in range
+export function calcRegionStats(symptoms, range) {
+  const stats = {}
+  for (const s of symptoms) {
+    if (range && !inRange(s.timestamp, range)) continue
+    const r = s.region
+    if (!r) continue
+    if (!stats[r]) stats[r] = { count: 0, maxIntensity: 0 }
+    stats[r].count++
+    stats[r].maxIntensity = Math.max(stats[r].maxIntensity, s.intensity ?? 1)
+  }
+  return stats
+}
+
 // Returns up to 5 insight objects { tag, text, stat }, sorted by sample size desc
 export function generateInsights(
   habits,

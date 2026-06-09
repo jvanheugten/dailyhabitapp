@@ -1,9 +1,17 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { vi } from 'vitest'
 import { Health } from './Health'
 import { HealthProvider } from '../contexts/HealthContext'
 import { VitalsProvider } from '../contexts/VitalsContext'
 import { db } from '../db/db'
+
+vi.mock('../components/health/BodyViewer3D', () => ({
+  BodyViewer3D: vi.fn(() => <div data-testid="body-viewer-3d" />),
+}))
+vi.mock('../components/health/RegionPicker', () => ({
+  RegionPicker: vi.fn(({ onSelect }) => <button onClick={() => onSelect('Head')}>Head</button>),
+}))
 
 beforeEach(async () => {
   await db.symptom_types.clear()

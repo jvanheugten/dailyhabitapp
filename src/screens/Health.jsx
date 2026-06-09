@@ -1,12 +1,12 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useHealth } from '../contexts/HealthContext'
 import { useVitals } from '../contexts/VitalsContext'
-import { BodyMap } from '../components/health/BodyMap'
+import { BodyViewer3D } from '../components/health/BodyViewer3D'
 import { LogSymptomSheet } from '../components/health/LogSymptomSheet'
 import { LogVitalSheet } from '../components/health/LogVitalSheet'
 import { GoogleFitSync } from '../components/health/GoogleFitSync'
-import { SymptomThumbnail } from '../components/health/SymptomThumbnail'
 import { intensityLabel } from '../utils/intensity'
+import { calcRegionStats } from '../utils/statsHelpers'
 import styles from './Health.module.css'
 
 export function Health() {
@@ -31,6 +31,8 @@ export function Health() {
     cutoff.setDate(cutoff.getDate() - 7)
     return symptoms.filter((s) => s.timestamp >= cutoff.toISOString())
   }, [symptoms])
+
+  const regionData = useMemo(() => calcRegionStats(recentSymptoms, null), [recentSymptoms])
 
   const vitalTypeMap = useMemo(
     () => Object.fromEntries(vitalTypes.map((vt) => [vt.id, vt])),
@@ -120,7 +122,22 @@ export function Health() {
         <div className={styles.overview}>
           <div className={styles.mapCard}>
             <span className={styles.mapCardHeader}>Body Map</span>
-            <BodyMap onRegionSelect={() => setShowSymptomSheet(true)} symptoms={recentSymptoms} />
+            <div
+              style={{
+                height: 260,
+                borderRadius: 'var(--radius)',
+                overflow: 'hidden',
+                cursor: 'pointer',
+              }}
+              onClick={() => setShowSymptomSheet(true)}
+            >
+              <BodyViewer3D
+                mode="stats"
+                region="Full Body"
+                regionData={regionData}
+                autoRotate={false}
+              />
+            </div>
           </div>
 
           {latestVitals.length > 0 && (
@@ -181,11 +198,21 @@ export function Health() {
                 data-date={item.timestamp.slice(0, 10)}
               >
                 {item.kind === 'symptom' && (
-                  <SymptomThumbnail
-                    region={item.region}
-                    view={item.view}
-                    svgPaths={item.svg_paths}
-                  />
+                  <div
+                    style={{
+                      flexShrink: 0,
+                      padding: '3px 8px',
+                      borderRadius: 12,
+                      background: 'var(--surface-2)',
+                      border: '1px solid var(--border-subtle)',
+                      fontSize: 10,
+                      color: 'var(--text-dim)',
+                      alignSelf: 'center',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {item.region ?? '—'}
+                  </div>
                 )}
                 <div className={styles.historyMeta}>
                   <span className={styles.historyType}>

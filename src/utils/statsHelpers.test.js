@@ -7,6 +7,7 @@ import {
   calcHeatmapData,
   calcSymptomFrequency,
   calcBodyMapIntensity,
+  calcRegionStats,
   generateInsights,
 } from './statsHelpers'
 
@@ -268,5 +269,28 @@ describe('generateInsights', () => {
   it('returns at most 5 insights', () => {
     const result = generateInsights([], [], [], [], [], [], mkRange('2026-06-01', '2026-06-30'))
     expect(result.length).toBeLessThanOrEqual(5)
+  })
+})
+
+describe('calcRegionStats', () => {
+  it('counts occurrences and tracks max intensity per region', () => {
+    const symptoms = [
+      { id: 1, region: 'Head', intensity: 2, timestamp: '2026-06-01T10:00:00Z' },
+      { id: 2, region: 'Head', intensity: 4, timestamp: '2026-06-02T10:00:00Z' },
+      { id: 3, region: 'Chest', intensity: 1, timestamp: '2026-06-01T10:00:00Z' },
+    ]
+    const result = calcRegionStats(symptoms, null)
+    expect(result['Head']).toEqual({ count: 2, maxIntensity: 4 })
+    expect(result['Chest']).toEqual({ count: 1, maxIntensity: 1 })
+  })
+
+  it('filters by range when provided', () => {
+    const symptoms = [
+      { id: 1, region: 'Head', intensity: 3, timestamp: '2026-06-01T10:00:00Z' },
+      { id: 2, region: 'Head', intensity: 2, timestamp: '2026-05-01T10:00:00Z' },
+    ]
+    const range = { start: new Date('2026-06-01T00:00:00Z'), end: new Date('2026-06-30T23:59:59Z') }
+    const result = calcRegionStats(symptoms, range)
+    expect(result['Head']).toEqual({ count: 1, maxIntensity: 3 })
   })
 })

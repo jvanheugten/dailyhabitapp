@@ -8,17 +8,10 @@ import {
   Tooltip,
   ReferenceArea,
 } from 'recharts'
-import { BodyMap } from '../health/BodyMap'
-import { calcSymptomFrequency, calcBodyMapIntensity } from '../../utils/statsHelpers'
+import { BodyViewer3D } from '../health/BodyViewer3D'
+import { calcSymptomFrequency, calcRegionStats } from '../../utils/statsHelpers'
 import { SymptomHeatmap } from './SymptomHeatmap'
 import styles from './HealthStats.module.css'
-
-function countToColor(count) {
-  if (count <= 0) return null
-  if (count <= 2) return 'rgba(249,115,22,0.3)'
-  if (count <= 5) return 'rgba(249,115,22,0.55)'
-  return '#f97316'
-}
 
 function parseVitalValue(entry, schema) {
   try {
@@ -40,16 +33,7 @@ export function HealthStats({ symptoms, symptomTypes, vitalTypes, vitalEntries, 
     [symptoms, symptomTypes, range]
   )
 
-  const regionCounts = useMemo(() => calcBodyMapIntensity(symptoms, range), [symptoms, range])
-
-  const regionColors = useMemo(() => {
-    const out = {}
-    for (const [id, count] of Object.entries(regionCounts)) {
-      const color = countToColor(count)
-      if (color) out[id] = color
-    }
-    return out
-  }, [regionCounts])
+  const regionData = useMemo(() => calcRegionStats(symptoms, range), [symptoms, range])
 
   const maxFreq = freq.length ? freq[0].count : 1
 
@@ -91,12 +75,14 @@ export function HealthStats({ symptoms, symptomTypes, vitalTypes, vitalEntries, 
                 <span className={styles.cardLabel}>Symptom frequency</span>
                 <div className={styles.freqRow}>
                   <div className={styles.bodyMapWrap}>
-                    <BodyMap
-                      onRegionSelect={() => {}}
-                      symptoms={[]}
-                      readOnly
-                      regionColors={regionColors}
-                    />
+                    <div style={{ height: 180, borderRadius: 'var(--radius)', overflow: 'hidden' }}>
+                      <BodyViewer3D
+                        mode="stats"
+                        region="Full Body"
+                        regionData={regionData}
+                        autoRotate={true}
+                      />
+                    </div>
                   </div>
                   <div className={styles.freqList}>
                     {freq.map((f) => (
