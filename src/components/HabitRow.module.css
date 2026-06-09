@@ -3,17 +3,20 @@
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
-  background: #1a1a1a;
-  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
   transition: opacity 0.15s;
 }
+
 .pending { opacity: 0.55; }
 .completed { opacity: 1; }
+
 .checkbox {
   width: 20px;
   height: 20px;
   border-radius: 6px;
-  border: 2px solid #444;
+  border: 2px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,6 +24,9 @@
   flex-shrink: 0;
   transition: background 0.15s, border-color 0.15s;
 }
-.checked { background: #4ade80; border-color: #4ade80; color: #000; }
-.name { flex: 1; font-size: 14px; }
+
+.checked { background: var(--green); border-color: var(--green); color: #000; }
+
+.name { flex: 1; font-size: 14px; font-weight: 500; }
+
 .streak { font-size: 12px; color: #f59e0b; }
