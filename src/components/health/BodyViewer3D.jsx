@@ -174,11 +174,15 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
         scene.add(gltf.scene)
         meshRef.current = mesh
 
-        // Fit camera to actual model bounds (model transforms vary wildly by source)
+        // Fit camera to actual model bounds — must updateMatrixWorld first so
+        // all parent transforms (scale/rotation in the GLTF node hierarchy) are applied
+        gltf.scene.updateMatrixWorld(true)
         const box = new THREE.Box3().setFromObject(gltf.scene)
         const center = box.getCenter(new THREE.Vector3())
         const size = box.getSize(new THREE.Vector3())
         const maxDim = Math.max(size.x, size.y, size.z)
+         
+        console.log('[BodyViewer3D] model bounds:', { center, size, maxDim })
         const camDist = (maxDim / 2 / Math.tan((cam.fov * Math.PI) / 180 / 2)) * 1.5
         cam.near = maxDim / 100
         cam.far = maxDim * 100
