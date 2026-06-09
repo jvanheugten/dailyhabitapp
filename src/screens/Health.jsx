@@ -5,6 +5,7 @@ import { BodyMap } from '../components/health/BodyMap'
 import { LogSymptomSheet } from '../components/health/LogSymptomSheet'
 import { LogVitalSheet } from '../components/health/LogVitalSheet'
 import { GoogleFitSync } from '../components/health/GoogleFitSync'
+import { SymptomThumbnail } from '../components/health/SymptomThumbnail'
 import { intensityLabel, intensityColor } from '../utils/intensity'
 import styles from './Health.module.css'
 
@@ -125,6 +126,9 @@ export function Health() {
           {filteredHistory.length === 0 && <p className={styles.empty}>No health events yet.</p>}
           {filteredHistory.map((item) => (
             <div key={`${item.kind}-${item.id}`} className={styles.historyRow}>
+              {item.kind === 'symptom' && (
+                <SymptomThumbnail region={item.region} view={item.view} svgPaths={item.svg_paths} />
+              )}
               <div className={styles.historyMeta}>
                 <span className={styles.historyType}>
                   {item.kind === 'symptom' ? '🤕' : '📊'}
