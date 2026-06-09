@@ -110,19 +110,40 @@ describe('exportAllData', () => {
     vi.stubGlobal('URL', { createObjectURL, revokeObjectURL })
 
     const mockAnchor = { href: '', download: '', click: vi.fn(), style: {} }
-    vi.spyOn(document, 'createElement').mockReturnValue(mockAnchor)
+    const realCreateElement = document.createElement.bind(document)
+    vi.spyOn(document, 'createElement').mockImplementation((tag) =>
+      tag === 'a' ? mockAnchor : realCreateElement(tag)
+    )
     vi.spyOn(document.body, 'appendChild').mockImplementation(() => {})
     vi.spyOn(document.body, 'removeChild').mockImplementation(() => {})
 
-    await exportAllData(testDb)
+    try {
+      await exportAllData(testDb)
 
-    expect(createObjectURL).toHaveBeenCalled()
-    expect(mockAnchor.click).toHaveBeenCalled()
-    expect(mockAnchor.download).toMatch(/^dailyhabitapp-export-\d{4}-\d{2}-\d{2}\.zip$/)
-    expect(revokeObjectURL).toHaveBeenCalledWith('blob:fake')
+      expect(createObjectURL).toHaveBeenCalled()
+      expect(mockAnchor.click).toHaveBeenCalled()
+      expect(mockAnchor.download).toMatch(/^dailyhabitapp-export-\d{4}-\d{2}-\d{2}\.zip$/)
+      expect(revokeObjectURL).toHaveBeenCalledWith('blob:fake')
 
-    vi.restoreAllMocks()
-    vi.unstubAllGlobals()
-    await testDb.close()
+      // Verify zip contents
+      const blob = createObjectURL.mock.calls[0][0]
+      const JSZip = (await import('jszip')).default
+      const zip = await JSZip.loadAsync(blob)
+      const fileNames = Object.keys(zip.files)
+      expect(fileNames).toContain('habits.csv')
+      expect(fileNames).toContain('completions.csv')
+      expect(fileNames).toContain('journal_entries.csv')
+      expect(fileNames).toContain('symptom_types.csv')
+      expect(fileNames).toContain('symptoms.csv')
+      expect(fileNames).toContain('vital_types.csv')
+      expect(fileNames).toContain('vital_entries.csv')
+      expect(fileNames).toContain('backup.json')
+      const habitsCsv = await zip.files['habits.csv'].async('string')
+      expect(habitsCsv).toContain('Run')
+    } finally {
+      vi.restoreAllMocks()
+      vi.unstubAllGlobals()
+      await testDb.close()
+    }
   })
 })

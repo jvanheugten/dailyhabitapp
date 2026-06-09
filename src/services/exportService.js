@@ -159,7 +159,7 @@ export async function exportAllData(db = defaultDb) {
 
   zip.file('backup.json', JSON.stringify(backup, null, 2))
 
-  const blob = await zip.generateAsync({ type: 'blob' })
+  const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' })
   const today = new Date().toISOString().slice(0, 10)
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
