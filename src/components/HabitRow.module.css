@@ -15,7 +15,7 @@
 .checkbox {
   width: 20px;
   height: 20px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: 2px solid var(--border);
   display: flex;
   align-items: center;
