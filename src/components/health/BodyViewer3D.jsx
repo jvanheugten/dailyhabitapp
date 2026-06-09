@@ -84,6 +84,7 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
   const textureRef = useRef(null)
   const meshRef = useRef(null)
   const materialRef = useRef(null)
+  const gltfSceneRef = useRef(null)
   const isPaintingRef = useRef(isPainting)
   const [loadError, setLoadError] = useState(false)
 
@@ -109,6 +110,8 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
   useEffect(() => {
     const el = mountRef.current
     if (!el) return
+
+    let cancelled = false
 
     const paintCanvas = document.createElement('canvas')
     paintCanvas.width = CANVAS_SIZE
@@ -158,6 +161,7 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
     loader.load(
       MODEL_URL,
       (gltf) => {
+        if (cancelled) return
         let mesh = null
         gltf.scene.traverse((obj) => {
           if (obj.isMesh && !mesh) mesh = obj
@@ -166,11 +170,13 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
         const material = new THREE.MeshStandardMaterial({ map: texture, color: 0xb0c8e0 })
         mesh.material = material
         materialRef.current = material
+        gltfSceneRef.current = gltf.scene
         scene.add(gltf.scene)
         meshRef.current = mesh
       },
       undefined,
       () => {
+        if (cancelled) return
         setLoadError(true)
       }
     )
@@ -206,7 +212,7 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
     }
 
     function handlePointerUp() {
-      if (!isPaintingRef.current) return
+      // Always commit any open stroke — safe because endStroke() is a no-op when no stroke is active
       painterRef.current.endStroke()
     }
 
@@ -222,14 +228,37 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
     }
     animate()
 
+    const resizeObserver = new ResizeObserver(() => {
+      if (cancelled) return
+      const w = el.clientWidth || 300
+      const h = el.clientHeight || 400
+      renderer.setSize(w, h)
+      cam.aspect = w / h
+      cam.updateProjectionMatrix()
+    })
+    resizeObserver.observe(el)
+
     return () => {
+      cancelled = true
       cancelAnimationFrame(animId)
+      resizeObserver.disconnect()
       renderer.domElement.removeEventListener('pointerdown', handlePointerDown)
       renderer.domElement.removeEventListener('pointermove', handlePointerMove)
       renderer.domElement.removeEventListener('pointerup', handlePointerUp)
       controls.dispose()
       renderer.dispose()
       texture.dispose()
+      if (gltfSceneRef.current) {
+        gltfSceneRef.current.traverse((obj) => {
+          if (obj.isMesh) {
+            obj.geometry?.dispose()
+            if (obj.material && obj.material !== materialRef.current) {
+              obj.material.dispose()
+            }
+          }
+        })
+        gltfSceneRef.current = null
+      }
       if (materialRef.current) {
         materialRef.current.dispose()
         materialRef.current = null
