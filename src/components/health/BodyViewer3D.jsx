@@ -176,7 +176,11 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
           if (obj.isMesh && !mesh) mesh = obj
         })
         if (!mesh) return
-        const material = new THREE.MeshStandardMaterial({ map: texture, color: 0xffffff })
+        const material = new THREE.MeshStandardMaterial({
+          map: texture,
+          color: 0xffffff,
+          side: THREE.DoubleSide,
+        })
         mesh.material = material
         materialRef.current = material
         gltfSceneRef.current = gltf.scene
@@ -221,7 +225,16 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
       e.preventDefault()
       getNDC(e)
       raycaster.setFromCamera(ndc, cam)
-      const hits = raycaster.intersectObject(meshRef.current)
+      const hits = raycaster.intersectObject(meshRef.current, true)
+       
+      console.log(
+        '[paint] ndc:',
+        ndc.x.toFixed(2),
+        ndc.y.toFixed(2),
+        'hits:',
+        hits.length,
+        hits[0]?.uv
+      )
       if (!hits.length || !hits[0].uv) return
       painterRef.current.beginStroke()
       painterRef.current.addPoint(hits[0].uv.x, hits[0].uv.y)
