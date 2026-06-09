@@ -132,6 +132,10 @@ describe('uploadBackup', () => {
     const id = await uploadBackup('tok', { version: 1, exportedAt: 'now', habits: [] })
     expect(id).toBe('new_file_id')
     expect(loadFileId()).toBe('new_file_id')
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('uploadType=multipart'),
+      expect.objectContaining({ method: 'POST' })
+    )
   })
 
   it('updates existing file when fileId is stored', async () => {

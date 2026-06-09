@@ -106,7 +106,8 @@ export async function getBackupInfo(token, fileId) {
     )
     const data = await res.json()
     return { modifiedTime: data.modifiedTime, size: Number(data.size) }
-  } catch {
+  } catch (e) {
+    if (e.message === 'drive_token_expired') throw e
     return null
   }
 }
