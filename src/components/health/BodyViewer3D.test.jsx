@@ -4,7 +4,6 @@ import { BodyViewer3D, countToHeatColor } from './BodyViewer3D'
 
 // Mock Three.js — no WebGL in jsdom
 vi.mock('three', () => {
-  const domElement = document.createElement('canvas')
   return {
     Scene: vi.fn(function () {
       return { add: vi.fn(), background: null }
@@ -20,7 +19,7 @@ vi.mock('three', () => {
       return {
         setSize: vi.fn(),
         setPixelRatio: vi.fn(),
-        domElement,
+        domElement: document.createElement('canvas'),
         render: vi.fn(),
         dispose: vi.fn(),
       }

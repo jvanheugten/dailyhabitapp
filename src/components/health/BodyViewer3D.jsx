@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
+import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -83,13 +83,19 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
   const canvasRef = useRef(null)
   const textureRef = useRef(null)
   const meshRef = useRef(null)
+  const materialRef = useRef(null)
   const isPaintingRef = useRef(isPainting)
+  const [loadError, setLoadError] = useState(false)
 
   useEffect(() => {
     isPaintingRef.current = isPainting
   }, [isPainting])
 
   const painter = useBodyPainter({ canvasRef, textureRef, brushSize, color: paintColor })
+  const painterRef = useRef(painter)
+  useEffect(() => {
+    painterRef.current = painter
+  })
 
   useImperativeHandle(ref, () => ({
     undo: painter.undo,
@@ -157,33 +163,15 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
           if (obj.isMesh && !mesh) mesh = obj
         })
         if (!mesh) return
-        mesh.material = new THREE.MeshStandardMaterial({ map: texture, color: 0xb0c8e0 })
+        const material = new THREE.MeshStandardMaterial({ map: texture, color: 0xb0c8e0 })
+        mesh.material = material
+        materialRef.current = material
         scene.add(gltf.scene)
         meshRef.current = mesh
-
-        if (mode === 'stats' && Object.keys(regionData).length > 0) {
-          const ctx = paintCanvas.getContext('2d')
-          for (const [name, { count, maxIntensity }] of Object.entries(regionData)) {
-            const centroid = REGION_UV_CENTROID[name]
-            if (!centroid) continue
-            const x = centroid.u * CANVAS_SIZE
-            const y = centroid.v * CANVAS_SIZE
-            const r = Math.min(120, 40 + count * 15)
-            const color = countToHeatColor(count, maxIntensity)
-            const grad = ctx.createRadialGradient(x, y, 0, x, y, r)
-            grad.addColorStop(0, color)
-            grad.addColorStop(1, 'rgba(0,0,0,0)')
-            ctx.fillStyle = grad
-            ctx.beginPath()
-            ctx.arc(x, y, r, 0, Math.PI * 2)
-            ctx.fill()
-          }
-          texture.needsUpdate = true
-        }
       },
       undefined,
       () => {
-        el.dataset.error = 'load'
+        setLoadError(true)
       }
     )
 
@@ -192,10 +180,8 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
 
     function getNDC(e) {
       const rect = renderer.domElement.getBoundingClientRect()
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY
-      ndc.x = ((clientX - rect.left) / rect.width) * 2 - 1
-      ndc.y = -((clientY - rect.top) / rect.height) * 2 + 1
+      ndc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+      ndc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1
     }
 
     function handlePointerDown(e) {
@@ -205,8 +191,8 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
       raycaster.setFromCamera(ndc, cam)
       const hits = raycaster.intersectObject(meshRef.current)
       if (!hits.length || !hits[0].uv) return
-      painter.beginStroke()
-      painter.addPoint(hits[0].uv.x, hits[0].uv.y)
+      painterRef.current.beginStroke()
+      painterRef.current.addPoint(hits[0].uv.x, hits[0].uv.y)
     }
 
     function handlePointerMove(e) {
@@ -216,20 +202,17 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
       raycaster.setFromCamera(ndc, cam)
       const hits = raycaster.intersectObject(meshRef.current)
       if (!hits.length || !hits[0].uv) return
-      painter.addPoint(hits[0].uv.x, hits[0].uv.y)
+      painterRef.current.addPoint(hits[0].uv.x, hits[0].uv.y)
     }
 
     function handlePointerUp() {
       if (!isPaintingRef.current) return
-      painter.endStroke()
+      painterRef.current.endStroke()
     }
 
     renderer.domElement.addEventListener('pointerdown', handlePointerDown)
     renderer.domElement.addEventListener('pointermove', handlePointerMove)
     renderer.domElement.addEventListener('pointerup', handlePointerUp)
-    renderer.domElement.addEventListener('touchstart', handlePointerDown, { passive: false })
-    renderer.domElement.addEventListener('touchmove', handlePointerMove, { passive: false })
-    renderer.domElement.addEventListener('touchend', handlePointerUp)
 
     let animId
     function animate() {
@@ -244,15 +227,43 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
       renderer.domElement.removeEventListener('pointerdown', handlePointerDown)
       renderer.domElement.removeEventListener('pointermove', handlePointerMove)
       renderer.domElement.removeEventListener('pointerup', handlePointerUp)
-      renderer.domElement.removeEventListener('touchstart', handlePointerDown)
-      renderer.domElement.removeEventListener('touchmove', handlePointerMove)
-      renderer.domElement.removeEventListener('touchend', handlePointerUp)
       controls.dispose()
       renderer.dispose()
       texture.dispose()
+      if (materialRef.current) {
+        materialRef.current.dispose()
+        materialRef.current = null
+      }
       if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement)
     }
   }, [region, mode, autoRotate]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Separate effect: redraw heat map when regionData changes (stats mode)
+  useEffect(() => {
+    if (mode !== 'stats' || !canvasRef.current || !textureRef.current) return
+    const ctx = canvasRef.current.getContext('2d')
+    if (!ctx) return
+    ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE)
+    for (const [name, { count, maxIntensity }] of Object.entries(regionData)) {
+      const centroid = REGION_UV_CENTROID[name]
+      if (!centroid) continue
+      const x = centroid.u * CANVAS_SIZE
+      const y = centroid.v * CANVAS_SIZE
+      const r = Math.min(120, 40 + count * 15)
+      const color = countToHeatColor(count, maxIntensity)
+      const grad = ctx.createRadialGradient(x, y, 0, x, y, r)
+      grad.addColorStop(0, color)
+      grad.addColorStop(1, 'rgba(0,0,0,0)')
+      ctx.fillStyle = grad
+      ctx.beginPath()
+      ctx.arc(x, y, r, 0, Math.PI * 2)
+      ctx.fill()
+    }
+    textureRef.current.needsUpdate = true
+  }, [regionData, mode])
+
+  if (loadError) {
+    return <div className={styles.error}>3D view unavailable — model failed to load</div>
+  }
   return <div ref={mountRef} className={styles.wrap} />
 })
