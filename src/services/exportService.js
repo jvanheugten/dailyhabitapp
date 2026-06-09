@@ -1,3 +1,8 @@
+// eslint-disable-next-line no-unused-vars
+import JSZip from 'jszip'
+// eslint-disable-next-line no-unused-vars
+import { db as defaultDb } from '../db/db'
+
 // ─── CSV helpers ──────────────────────────────────────────────────────────────
 
 export function csvQuote(value) {
@@ -10,7 +15,7 @@ export function csvQuote(value) {
 }
 
 export function toCsv(headers, rows) {
-  const lines = [headers.join(',')]
+  const lines = [headers.map(csvQuote).join(',')]
   for (const row of rows) {
     lines.push(row.map(csvQuote).join(','))
   }
@@ -24,6 +29,7 @@ export async function buildBackupJSON(db) {
     habits,
     completions,
     journal_entries,
+    notification_prefs,
     symptom_types,
     symptoms,
     vital_types,
@@ -33,6 +39,7 @@ export async function buildBackupJSON(db) {
     db.habits.toArray(),
     db.completions.toArray(),
     db.journal_entries.toArray(),
+    db.notification_prefs.toArray(),
     db.symptom_types.toArray(),
     db.symptoms.toArray(),
     db.vital_types.toArray(),
@@ -45,6 +52,7 @@ export async function buildBackupJSON(db) {
     habits,
     completions,
     journal_entries,
+    notification_prefs,
     symptom_types,
     symptoms,
     vital_types,

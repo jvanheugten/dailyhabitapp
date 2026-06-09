@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { csvQuote, toCsv, buildBackupJSON } from './exportService'
 import Dexie from 'dexie'
-import 'fake-indexeddb/auto'
 
 // ── csvQuote ──────────────────────────────────────────────────────────────────
 
@@ -55,11 +54,13 @@ describe('toCsv', () => {
 
 describe('buildBackupJSON', () => {
   it('returns version 1 with all required keys', async () => {
-    const testDb = new Dexie('test_backup')
+    const { IDBFactory } = await import('fake-indexeddb')
+    const testDb = new Dexie('test_backup', { indexedDB: new IDBFactory() })
     testDb.version(1).stores({
       habits: '++id',
       completions: '++id',
       journal_entries: '++id',
+      notification_prefs: 'habitId',
       symptom_types: '++id',
       symptoms: '++id',
       vital_types: '++id',
@@ -79,6 +80,7 @@ describe('buildBackupJSON', () => {
     expect(backup.vital_types).toHaveLength(1)
     expect(backup.completions).toEqual([])
     expect(backup.symptoms).toEqual([])
+    expect(backup.notification_prefs).toEqual([])
 
     await testDb.close()
   })
