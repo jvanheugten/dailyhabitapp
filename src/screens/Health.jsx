@@ -124,6 +124,7 @@ export function Health() {
             <span className={styles.mapCardHeader}>Body Map</span>
             <div
               style={{
+                width: '100%',
                 height: 260,
                 borderRadius: 'var(--radius)',
                 overflow: 'hidden',
