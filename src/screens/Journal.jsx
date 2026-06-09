@@ -19,8 +19,12 @@ export function Journal() {
 
   async function handleBlur() {
     if (!selected) return
+    const now = new Date().toISOString()
     await saveEntry(selected.date, editText)
-    setEntries((prev) => prev.map((e) => (e.date === selected.date ? { ...e, text: editText } : e)))
+    setSelected((prev) => ({ ...prev, text: editText, updatedAt: now }))
+    setEntries((prev) =>
+      prev.map((e) => (e.date === selected.date ? { ...e, text: editText, updatedAt: now } : e))
+    )
   }
 
   if (selected) {
@@ -38,6 +42,29 @@ export function Journal() {
             ← Back
           </button>
           <span className={styles.entryDateFull}>{label}</span>
+        </div>
+        <div className={styles.timestamps}>
+          <span>
+            Created{' '}
+            {new Date(selected.createdAt).toLocaleString('en', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </span>
+          {selected.updatedAt !== selected.createdAt && (
+            <span>
+              · Edited{' '}
+              {new Date(selected.updatedAt).toLocaleString('en', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </span>
+          )}
         </div>
         <textarea
           className={styles.editArea}

@@ -7,6 +7,11 @@ import styles from './LogSymptomSheet.module.css'
 
 const PAIN_TYPES = ['Throbbing', 'Sharp', 'Dull', 'Burning', 'Aching']
 
+function toDateTimeLocal(date) {
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
 export function LogSymptomSheet({ onClose }) {
   const { symptomTypes, addSymptomType, addSymptom, symptoms } = useHealth()
   const [step, setStep] = useState(1)
@@ -18,6 +23,7 @@ export function LogSymptomSheet({ onClose }) {
   const [newTypeName, setNewTypeName] = useState('')
   const [painTypes, setPainTypes] = useState([])
   const [notes, setNotes] = useState('')
+  const [timestamp, setTimestamp] = useState(() => toDateTimeLocal(new Date()))
 
   function handleRegionSelect(r) {
     setRegion(r)
@@ -48,7 +54,7 @@ export function LogSymptomSheet({ onClose }) {
       intensity,
       pain_type: JSON.stringify(painTypes),
       notes,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(timestamp).toISOString(),
     })
     onClose()
   }
@@ -157,6 +163,16 @@ export function LogSymptomSheet({ onClose }) {
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
                 placeholder="Optional note..."
+              />
+            </div>
+            <div className={styles.section}>
+              <span className={styles.sectionLabel}>Date & time</span>
+              <input
+                type="datetime-local"
+                className={styles.input}
+                value={timestamp}
+                max={toDateTimeLocal(new Date())}
+                onChange={(e) => setTimestamp(e.target.value)}
               />
             </div>
             <button

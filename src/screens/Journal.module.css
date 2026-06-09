@@ -15,3 +15,11 @@
   flex: 1; background: transparent; border: none; outline: none;
   padding: 0 16px 16px; font-size: 16px; color: #e0e0e0; line-height: 1.6; resize: none;
 }
+.timestamps {
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 4px 0 0;
+  flex-wrap: wrap;
+}

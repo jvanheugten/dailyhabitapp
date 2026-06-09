@@ -3,6 +3,11 @@ import { useVitals } from '../../contexts/VitalsContext'
 import { VitalTypeForm } from './VitalTypeForm'
 import styles from './LogVitalSheet.module.css'
 
+function toDateTimeLocal(date) {
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
 export function LogVitalSheet({ onClose }) {
   const { vitalTypes, addVitalType, addVitalEntry } = useVitals()
   const [selectedType, setSelectedType] = useState(null)
@@ -10,6 +15,7 @@ export function LogVitalSheet({ onClose }) {
   const [sys, setSys] = useState('')
   const [dia, setDia] = useState('')
   const [notes, setNotes] = useState('')
+  const [timestamp, setTimestamp] = useState(() => toDateTimeLocal(new Date()))
   const [showTypeForm, setShowTypeForm] = useState(false)
 
   async function handleSave() {
@@ -20,7 +26,12 @@ export function LogVitalSheet({ onClose }) {
     } else {
       value = JSON.stringify(singleValue)
     }
-    await addVitalEntry({ vital_type_id: selectedType.id, value, notes })
+    await addVitalEntry({
+      vital_type_id: selectedType.id,
+      value,
+      notes,
+      timestamp: new Date(timestamp).toISOString(),
+    })
     onClose()
   }
 
@@ -108,6 +119,17 @@ export function LogVitalSheet({ onClose }) {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={2}
+          />
+        </div>
+
+        <div className={styles.section}>
+          <span className={styles.sectionLabel}>Date & time</span>
+          <input
+            type="datetime-local"
+            className={styles.input}
+            value={timestamp}
+            max={toDateTimeLocal(new Date())}
+            onChange={(e) => setTimestamp(e.target.value)}
           />
         </div>
 
