@@ -161,6 +161,58 @@ export function BodyMap({ onRegionSelect, symptoms = [], readOnly = false, regio
               />
             )
           })}
+
+          {/* Anatomical landmark overlay */}
+          {view === 'front' && (
+            <g pointerEvents="none" opacity={0.35}>
+              {/* Collar bones */}
+              <line x1="40" y1="28" x2="52" y2="32" stroke="#3d8ef0" strokeWidth={0.6} />
+              <line x1="60" y1="28" x2="48" y2="32" stroke="#3d8ef0" strokeWidth={0.6} />
+              {/* Sternum */}
+              <line
+                x1="50"
+                y1="32"
+                x2="50"
+                y2="62"
+                stroke="#3d8ef0"
+                strokeWidth={0.7}
+                strokeDasharray="2,2"
+              />
+              {/* Navel */}
+              <circle cx="50" cy="95" r="1.8" fill="#3d8ef0" />
+              {/* Hip hints */}
+              <path d="M30,112 Q50,116 70,112" fill="none" stroke="#3d8ef0" strokeWidth={0.6} />
+            </g>
+          )}
+          {view === 'back' && (
+            <g pointerEvents="none" opacity={0.35}>
+              {/* Spine */}
+              <line
+                x1="50"
+                y1="30"
+                x2="50"
+                y2="122"
+                stroke="#3d8ef0"
+                strokeWidth={0.7}
+                strokeDasharray="3,2"
+              />
+              {/* Shoulder blades */}
+              <path
+                d="M34,38 C30,42 28,54 32,62 C36,66 42,64 44,58 Z"
+                fill="none"
+                stroke="#3d8ef0"
+                strokeWidth={0.8}
+              />
+              <path
+                d="M66,38 C70,42 72,54 68,62 C64,66 58,64 56,58 Z"
+                fill="none"
+                stroke="#3d8ef0"
+                strokeWidth={0.8}
+              />
+              {/* Sacrum/lower back */}
+              <path d="M40,110 Q50,118 60,110" fill="none" stroke="#3d8ef0" strokeWidth={0.6} />
+            </g>
+          )}
         </svg>
 
         {/* Hover label */}

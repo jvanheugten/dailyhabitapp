@@ -43,6 +43,9 @@
   background: var(--surface);
   border: 1px solid var(--border-subtle);
   aspect-ratio: 2 / 3;
+  max-height: min(52vh, 280px);
+  width: auto;
+  align-self: center;
 }
 
 .regionImg {
