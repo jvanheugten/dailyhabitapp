@@ -83,6 +83,18 @@ describe('auto-sync on mount', () => {
 
     expect(uploadBackup).toHaveBeenCalled()
   })
+
+  it('does NOT call requestAccessToken when silent and token is expired', async () => {
+    const { isConnected, requestAccessToken, loadToken } = await import('../services/googleDrive')
+    isConnected.mockReturnValue(true)
+    loadToken.mockReturnValue(null) // simulate expired token
+    localStorage.setItem('drive_last_synced', String(Date.now() - 90_000_000))
+
+    renderHook(() => useSync(), { wrapper })
+    await new Promise((r) => setTimeout(r, 100))
+
+    expect(requestAccessToken).not.toHaveBeenCalled()
+  })
 })
 
 describe('connect', () => {

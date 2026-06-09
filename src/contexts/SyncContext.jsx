@@ -33,11 +33,18 @@ export function SyncProvider({ children }) {
     if (!isConnected) return
     const token = loadToken()
     const fileId = loadFileId()
-    if (token && fileId) getBackupInfo(token, fileId).then(setBackupInfo)
+    if (token && fileId) {
+      getBackupInfo(token, fileId)
+        .then(setBackupInfo)
+        .catch((e) => {
+          if (e.message === 'drive_token_expired') setIsConnected(false)
+        })
+    }
   }, [isConnected, lastSyncedAt])
 
   const syncNow = useCallback(async (silent = false) => {
     let token = loadToken()
+    if (!token && silent) return // silent auto-sync must NOT trigger OAuth popup
     if (!token) {
       try {
         token = await requestAccessToken()
@@ -67,12 +74,13 @@ export function SyncProvider({ children }) {
     }
   }, [])
 
+  // Intentional mount-only snapshot — adding isConnected/lastSyncedAt as deps would
+  // re-trigger after every sync, creating an infinite loop.
   useEffect(() => {
     if (isConnected && Date.now() - lastSyncedAt > AUTO_SYNC_MS) {
       setTimeout(() => syncNow(true), 0)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const connect = useCallback(async () => {
     setSyncError(null)
@@ -96,6 +104,7 @@ export function SyncProvider({ children }) {
     setSyncError(null)
     const token = loadToken()
     if (!token) {
+      setIsConnected(false)
       setSyncError('Not connected to Google Drive')
       return
     }
