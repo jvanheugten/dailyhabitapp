@@ -85,11 +85,13 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
   const meshRef = useRef(null)
   const materialRef = useRef(null)
   const gltfSceneRef = useRef(null)
+  const controlsRef = useRef(null)
   const isPaintingRef = useRef(isPainting)
   const [loadError, setLoadError] = useState(false)
 
   useEffect(() => {
     isPaintingRef.current = isPainting
+    if (controlsRef.current) controlsRef.current.enabled = !isPainting
   }, [isPainting])
 
   const painter = useBodyPainter({ canvasRef, textureRef, brushSize, color: paintColor })
@@ -138,13 +140,17 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
     const camConfig = REGION_CAMERA[region] ?? REGION_CAMERA['Full Body']
     cam.position.set(...camConfig.position)
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.4))
-    const dir = new THREE.DirectionalLight(0xffffff, 1.2)
+    scene.add(new THREE.AmbientLight(0xffffff, 0.8))
+    const dir = new THREE.DirectionalLight(0xffffff, 1.6)
     dir.position.set(2, 4, 3)
     scene.add(dir)
-    scene.add(new THREE.HemisphereLight(0x3d8ef0, 0x070c16, 0.3))
+    const dir2 = new THREE.DirectionalLight(0xffffff, 0.4)
+    dir2.position.set(-2, -1, -2)
+    scene.add(dir2)
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x3d8ef0, 0.3))
 
     const controls = new OrbitControls(cam, renderer.domElement)
+    controlsRef.current = controls
     controls.target.set(...camConfig.target)
     controls.enableDamping = true
     controls.dampingFactor = 0.05
@@ -170,7 +176,7 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
           if (obj.isMesh && !mesh) mesh = obj
         })
         if (!mesh) return
-        const material = new THREE.MeshStandardMaterial({ map: texture, color: 0xb0c8e0 })
+        const material = new THREE.MeshStandardMaterial({ map: texture, color: 0xffffff })
         mesh.material = material
         materialRef.current = material
         gltfSceneRef.current = gltf.scene
@@ -266,6 +272,7 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
       renderer.domElement.removeEventListener('pointermove', handlePointerMove)
       renderer.domElement.removeEventListener('pointerup', handlePointerUp)
       controls.dispose()
+      controlsRef.current = null
       renderer.dispose()
       texture.dispose()
       if (gltfSceneRef.current) {
