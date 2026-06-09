@@ -12,6 +12,12 @@ async function init() {
 
 init()
 
+if (import.meta.env.DEV) {
+  import('./dev/seed.js').then(({ seedDevData }) => {
+    window.seedDevData = seedDevData
+  })
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
