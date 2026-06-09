@@ -1,3 +1,10 @@
+// eslint-disable-next-line no-unused-vars
+const CLIENT_ID = import.meta.env?.VITE_GOOGLE_CLIENT_ID ?? ''
+// eslint-disable-next-line no-unused-vars
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata'
+// eslint-disable-next-line no-unused-vars
+const BACKUP_FILENAME = 'dailyhabitapp-backup.json'
+
 const TOKEN_KEY = 'drive_token'
 const EXPIRY_KEY = 'drive_expiry'
 const FILE_ID_KEY = 'drive_backup_file_id'
