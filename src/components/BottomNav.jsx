@@ -6,6 +6,7 @@ const TABS = [
   { id: 'journal', label: 'Journal', icon: '📓' },
   { id: 'health', label: 'Health', icon: '🩺' },
   { id: 'stats', label: 'Stats', icon: '📊' },
+  { id: 'settings', label: 'Settings', icon: '🔧' },
 ]
 
 export function BottomNav({ activeTab, onTabChange }) {
