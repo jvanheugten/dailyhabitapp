@@ -174,7 +174,7 @@ export function CloudSyncPanel() {
   )
 }
 
-function ExportCard({ exporting, onExport }) {
+export function ExportCard({ exporting, onExport }) {
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
