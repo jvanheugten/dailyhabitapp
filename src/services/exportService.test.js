@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { csvQuote, toCsv, buildBackupJSON } from './exportService'
+import { describe, it, expect, vi } from 'vitest'
+import { csvQuote, toCsv, buildBackupJSON, exportAllData } from './exportService'
 import Dexie from 'dexie'
 
 // ── csvQuote ──────────────────────────────────────────────────────────────────
@@ -82,6 +82,47 @@ describe('buildBackupJSON', () => {
     expect(backup.symptoms).toEqual([])
     expect(backup.notification_prefs).toEqual([])
 
+    await testDb.close()
+  })
+})
+
+// ── exportAllData ─────────────────────────────────────────────────────────────
+
+describe('exportAllData', () => {
+  it('triggers a zip download with correct filename and cleans up', async () => {
+    const { IDBFactory } = await import('fake-indexeddb')
+    const testDb = new Dexie('test_export', { indexedDB: new IDBFactory() })
+    testDb.version(1).stores({
+      habits: '++id',
+      completions: '++id',
+      journal_entries: '++id',
+      notification_prefs: 'habitId',
+      symptom_types: '++id',
+      symptoms: '++id',
+      vital_types: '++id',
+      vital_entries: '++id',
+      google_fit_sync: '++id',
+    })
+    await testDb.habits.add({ name: 'Run', days: [1, 2], time: '07:00', streak: 3 })
+
+    const revokeObjectURL = vi.fn()
+    const createObjectURL = vi.fn(() => 'blob:fake')
+    vi.stubGlobal('URL', { createObjectURL, revokeObjectURL })
+
+    const mockAnchor = { href: '', download: '', click: vi.fn(), style: {} }
+    vi.spyOn(document, 'createElement').mockReturnValue(mockAnchor)
+    vi.spyOn(document.body, 'appendChild').mockImplementation(() => {})
+    vi.spyOn(document.body, 'removeChild').mockImplementation(() => {})
+
+    await exportAllData(testDb)
+
+    expect(createObjectURL).toHaveBeenCalled()
+    expect(mockAnchor.click).toHaveBeenCalled()
+    expect(mockAnchor.download).toMatch(/^dailyhabitapp-export-\d{4}-\d{2}-\d{2}\.zip$/)
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:fake')
+
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
     await testDb.close()
   })
 })
