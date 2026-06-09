@@ -38,20 +38,27 @@ vi.mock('../services/exportService', () => ({
 }))
 
 // Mock db
-vi.mock('../db/db', () => ({
-  db: {
-    habits: { clear: vi.fn(async () => {}), bulkAdd: vi.fn(async () => {}) },
-    completions: { clear: vi.fn(async () => {}), bulkAdd: vi.fn(async () => {}) },
-    journal_entries: { clear: vi.fn(async () => {}), bulkAdd: vi.fn(async () => {}) },
-    notification_prefs: { clear: vi.fn(async () => {}), bulkAdd: vi.fn(async () => {}) },
-    symptom_types: { clear: vi.fn(async () => {}), bulkAdd: vi.fn(async () => {}) },
-    symptoms: { clear: vi.fn(async () => {}), bulkAdd: vi.fn(async () => {}) },
-    vital_types: { clear: vi.fn(async () => {}), bulkAdd: vi.fn(async () => {}) },
-    vital_entries: { clear: vi.fn(async () => {}), bulkAdd: vi.fn(async () => {}) },
-    google_fit_sync: { clear: vi.fn(async () => {}), bulkAdd: vi.fn(async () => {}) },
-    transaction: vi.fn(async (_mode, _tables, fn) => fn()),
-  },
-}))
+vi.mock('../db/db', () => {
+  const createTable = () => ({ clear: vi.fn(async () => {}), bulkAdd: vi.fn(async () => {}) })
+  return {
+    db: {
+      habits: createTable(),
+      completions: createTable(),
+      journal_entries: createTable(),
+      notification_prefs: createTable(),
+      symptom_types: createTable(),
+      symptoms: createTable(),
+      vital_types: createTable(),
+      vital_entries: createTable(),
+      google_fit_sync: createTable(),
+      transaction: vi.fn(async (_mode, ...args) => {
+        // Last argument is the function, all others are tables
+        const fn = args[args.length - 1]
+        return await fn()
+      }),
+    },
+  }
+})
 
 const wrapper = ({ children }) => <SyncProvider>{children}</SyncProvider>
 
@@ -136,5 +143,83 @@ describe('syncNow', () => {
       await result.current.syncNow()
     })
     expect(result.current.isConnected).toBe(false)
+  })
+})
+
+describe('initiateRestore', () => {
+  it('sets pendingRestore with downloaded backup', async () => {
+    const { loadToken, loadFileId } = await import('../services/googleDrive')
+    loadToken.mockReturnValue('tok')
+    loadFileId.mockReturnValue('fid')
+    const { result } = renderHook(() => useSync(), { wrapper })
+    await act(async () => {
+      await result.current.initiateRestore()
+    })
+    expect(result.current.pendingRestore).not.toBeNull()
+    expect(result.current.pendingRestore.version).toBe(1)
+    expect(result.current.pendingRestore.habits).toHaveLength(1)
+  })
+
+  it('sets syncError when no backup file found', async () => {
+    const { loadToken, loadFileId, findBackupFile } = await import('../services/googleDrive')
+    loadToken.mockReturnValue('tok')
+    loadFileId.mockReturnValue(null)
+    findBackupFile.mockResolvedValueOnce(null)
+    const { result } = renderHook(() => useSync(), { wrapper })
+    await act(async () => {
+      await result.current.initiateRestore()
+    })
+    expect(result.current.syncError).toBe('No backup found in Google Drive')
+    expect(result.current.pendingRestore).toBeNull()
+  })
+})
+
+describe('cancelRestore', () => {
+  it('clears pendingRestore', async () => {
+    const { loadToken, loadFileId } = await import('../services/googleDrive')
+    loadToken.mockReturnValue('tok')
+    loadFileId.mockReturnValue('fid')
+    const { result } = renderHook(() => useSync(), { wrapper })
+    await act(async () => {
+      await result.current.initiateRestore()
+    })
+    expect(result.current.pendingRestore).not.toBeNull()
+    act(() => {
+      result.current.cancelRestore()
+    })
+    expect(result.current.pendingRestore).toBeNull()
+  })
+})
+
+describe('confirmRestore', () => {
+  it('clears all tables and calls location.reload', async () => {
+    const { loadToken, loadFileId } = await import('../services/googleDrive')
+    const { db } = await import('../db/db')
+    loadToken.mockReturnValue('tok')
+    loadFileId.mockReturnValue('fid')
+
+    // Mock window.location.reload by replacing the entire location object
+    const reloadMock = vi.fn()
+    const originalLocation = window.location
+    // @ts-ignore
+    delete window.location
+    // @ts-ignore
+    window.location = { reload: reloadMock }
+
+    const { result } = renderHook(() => useSync(), { wrapper })
+    await act(async () => {
+      await result.current.initiateRestore()
+    })
+
+    await act(async () => {
+      await result.current.confirmRestore()
+    })
+
+    expect(db.habits.clear).toHaveBeenCalled()
+    expect(db.vital_entries.clear).toHaveBeenCalled()
+    expect(reloadMock).toHaveBeenCalled()
+
+    // Restore
+    window.location = originalLocation
   })
 })
