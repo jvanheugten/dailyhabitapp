@@ -1,0 +1,216 @@
+/* ── Shared card shell ─────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardTitle {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.cardDesc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* ── Connection status ─────────────────────────────────────────────────── */
+.connectedBadge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--green);
+}
+
+.connectedDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 5px var(--green);
+  flex-shrink: 0;
+}
+
+.syncInfo {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────────── */
+.connectBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: border-color 0.15s, color 0.15s;
+}
+.connectBtn:hover { border-color: var(--accent); color: var(--text); }
+.connectBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.actionRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.syncBtn {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-dim);
+  border: 1px solid rgba(61,142,240,0.3);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.syncBtn:hover:not(:disabled) { background: rgba(61,142,240,0.2); }
+.syncBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.restoreBtn {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  transition: border-color 0.15s;
+}
+.restoreBtn:hover:not(:disabled) { border-color: var(--border); color: var(--text); }
+.restoreBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.disconnectBtn {
+  font-size: 11px;
+  color: var(--text-dim);
+  transition: color 0.15s;
+}
+.disconnectBtn:hover { color: #ef4444; }
+
+.exportBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: border-color 0.15s, color 0.15s;
+}
+.exportBtn:hover:not(:disabled) { border-color: var(--accent); color: var(--text); }
+.exportBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Error ─────────────────────────────────────────────────────────────── */
+.error {
+  font-size: 12px;
+  color: #ef4444;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  margin: 0;
+}
+
+/* ── Restore confirmation ───────────────────────────────────────────────── */
+.restoreConfirm {
+  background: rgba(239,68,68,0.06);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.restoreWarning {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.restoreMeta {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.restoreDestructive {
+  font-size: 11px;
+  color: #ef4444;
+}
+
+.restoreActions {
+  display: flex;
+  gap: 8px;
+}
+
+.confirmBtn {
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  background: #ef4444;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+.confirmBtn:hover { opacity: 0.88; }
+.confirmBtn:disabled { opacity: 0.5; }
+
+.cancelBtn {
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ── Overlay spinner ────────────────────────────────────────────────────── */
+.restoring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
