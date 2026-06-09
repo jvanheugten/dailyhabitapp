@@ -1,0 +1,1 @@
+"Male Low Poly Human Body" (https://skfb.ly/6ZNwQ) by 5$toPolyMan is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
