@@ -205,6 +205,47 @@
   letter-spacing: 0.02em;
 }
 
+/* ── Delete button ───────────────────────────────────── */
+.deleteBtn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  background: transparent;
+  color: var(--text-dim);
+  transition: background 0.15s, color 0.15s;
+  margin-left: auto;
+  align-self: center;
+}
+
+.deleteBtn:hover { color: #ef4444; }
+
+.deleteBtnArmed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.pendingDelete {
+  border-color: rgba(239, 68, 68, 0.35) !important;
+  background: rgba(239, 68, 68, 0.06) !important;
+}
+
+@keyframes rowExit {
+  from { opacity: 1; transform: translateX(0); max-height: 80px; margin-bottom: 6px; }
+  to   { opacity: 0; transform: translateX(48px); max-height: 0; margin-bottom: 0; padding: 0; }
+}
+
+.exitingRow {
+  animation: rowExit 0.25s ease forwards;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .intensityDot {
   width: 9px;
   height: 9px;

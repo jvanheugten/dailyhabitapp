@@ -6,24 +6,33 @@ import { LogSymptomSheet } from '../components/health/LogSymptomSheet'
 import { LogVitalSheet } from '../components/health/LogVitalSheet'
 import { GoogleFitSync } from '../components/health/GoogleFitSync'
 import { SymptomThumbnail } from '../components/health/SymptomThumbnail'
-import { intensityLabel, intensityColor } from '../utils/intensity'
+import { intensityLabel } from '../utils/intensity'
 import styles from './Health.module.css'
 
 export function Health() {
-  const { symptoms } = useHealth()
-  const { vitalTypes, vitalEntries } = useVitals()
+  const { symptoms, deleteSymptom } = useHealth()
+  const { vitalTypes, vitalEntries, deleteVitalEntry } = useVitals()
   const [tab, setTab] = useState('overview')
   const [showSymptomSheet, setShowSymptomSheet] = useState(false)
   const [showVitalSheet, setShowVitalSheet] = useState(false)
   const [historyFilter, setHistoryFilter] = useState('all')
   const [scrollDate, setScrollDate] = useState(null)
   const [isScrolling, setIsScrolling] = useState(false)
+  const [pendingDeleteKey, setPendingDeleteKey] = useState(null)
+  const [exitingKey, setExitingKey] = useState(null)
 
   const screenRef = useRef(null)
   const listRef = useRef(null)
   const scrollTimerRef = useRef(null)
+  const deleteTimerRef = useRef(null)
 
-  useEffect(() => () => clearTimeout(scrollTimerRef.current), [])
+  useEffect(
+    () => () => {
+      clearTimeout(scrollTimerRef.current)
+      clearTimeout(deleteTimerRef.current)
+    },
+    []
+  )
 
   const recentSymptoms = useMemo(() => {
     const cutoff = new Date()
@@ -61,6 +70,26 @@ export function Health() {
       return `${v} ${vt.unit}`
     } catch {
       return '—'
+    }
+  }
+
+  function handleDeleteTap(e, key, item) {
+    e.stopPropagation()
+    if (pendingDeleteKey === key) {
+      // Second tap — animate out then delete
+      clearTimeout(deleteTimerRef.current)
+      setPendingDeleteKey(null)
+      setExitingKey(key)
+      setTimeout(async () => {
+        if (item.kind === 'symptom') await deleteSymptom(item.id)
+        else await deleteVitalEntry(item.id)
+        setExitingKey(null)
+      }, 260)
+    } else {
+      // First tap — arm the delete
+      clearTimeout(deleteTimerRef.current)
+      setPendingDeleteKey(key)
+      deleteTimerRef.current = setTimeout(() => setPendingDeleteKey(null), 2500)
     }
   }
 
@@ -160,11 +189,14 @@ export function Health() {
           </div>
           {filteredHistory.length === 0 && <p className={styles.empty}>No health events yet.</p>}
           {filteredHistory.map((item) => {
+            const key = `${item.kind}-${item.id}`
             const vt = item.kind === 'vital' ? vitalTypeMap[item.vital_type_id] : null
+            const isPending = pendingDeleteKey === key
+            const isExiting = exitingKey === key
             return (
               <div
-                key={`${item.kind}-${item.id}`}
-                className={styles.historyRow}
+                key={key}
+                className={`${styles.historyRow} ${isPending ? styles.pendingDelete : ''} ${isExiting ? styles.exitingRow : ''}`}
                 data-date={item.timestamp.slice(0, 10)}
               >
                 {item.kind === 'symptom' && (
@@ -192,12 +224,13 @@ export function Health() {
                     })}
                   </span>
                 </div>
-                {item.kind === 'symptom' && item.intensity && (
-                  <span
-                    className={styles.intensityDot}
-                    style={{ background: intensityColor(item.intensity) }}
-                  />
-                )}
+                <button
+                  className={`${styles.deleteBtn} ${isPending ? styles.deleteBtnArmed : ''}`}
+                  onClick={(e) => handleDeleteTap(e, key, item)}
+                  aria-label="Delete entry"
+                >
+                  {isPending ? '✕' : '🗑'}
+                </button>
               </div>
             )
           })}

@@ -51,6 +51,11 @@ export function VitalsProvider({ children }) {
     return saved
   }, [])
 
+  const deleteVitalEntry = useCallback(async (id) => {
+    await db.vital_entries.delete(id)
+    setVitalEntries((prev) => prev.filter((e) => e.id !== id))
+  }, [])
+
   const getEntriesForType = useCallback(async (vitalTypeId, limit = 50) => {
     return db.vital_entries
       .where('vital_type_id')
@@ -84,6 +89,7 @@ export function VitalsProvider({ children }) {
         updateVitalType,
         deleteVitalType,
         addVitalEntry,
+        deleteVitalEntry,
         getEntriesForType,
         getVitalTypeMap,
         bulkImportGoogleFitEntries,
