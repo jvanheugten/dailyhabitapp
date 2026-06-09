@@ -2,9 +2,13 @@ import { useSpeech } from '../hooks/useSpeech'
 import styles from './JournalEditor.module.css'
 
 export function JournalEditor({ value, onChange, onBlur }) {
-  const { isSupported, isListening, startListening } = useSpeech()
+  const { isSupported, isListening, startListening, stopListening } = useSpeech()
 
   function handleMic() {
+    if (isListening) {
+      stopListening()
+      return
+    }
     startListening((transcript) => {
       onChange(value ? `${value} ${transcript}` : transcript)
     })

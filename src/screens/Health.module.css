@@ -215,25 +215,15 @@
   align-items: center;
   justify-content: center;
   font-size: 13px;
-  background: transparent;
-  color: var(--text-dim);
-  transition: background 0.15s, color 0.15s;
+  font-weight: 700;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  transition: background 0.15s;
   margin-left: auto;
   align-self: center;
 }
 
-.deleteBtn:hover { color: #ef4444; }
-
-.deleteBtnArmed {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-  font-weight: 700;
-}
-
-.pendingDelete {
-  border-color: rgba(239, 68, 68, 0.35) !important;
-  background: rgba(239, 68, 68, 0.06) !important;
-}
+.deleteBtn:hover { background: rgba(239, 68, 68, 0.22); }
 
 @keyframes rowExit {
   from { opacity: 1; transform: translateX(0); max-height: 80px; margin-bottom: 6px; }

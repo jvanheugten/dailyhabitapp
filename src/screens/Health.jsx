@@ -18,21 +18,13 @@ export function Health() {
   const [historyFilter, setHistoryFilter] = useState('all')
   const [scrollDate, setScrollDate] = useState(null)
   const [isScrolling, setIsScrolling] = useState(false)
-  const [pendingDeleteKey, setPendingDeleteKey] = useState(null)
   const [exitingKey, setExitingKey] = useState(null)
 
   const screenRef = useRef(null)
   const listRef = useRef(null)
   const scrollTimerRef = useRef(null)
-  const deleteTimerRef = useRef(null)
 
-  useEffect(
-    () => () => {
-      clearTimeout(scrollTimerRef.current)
-      clearTimeout(deleteTimerRef.current)
-    },
-    []
-  )
+  useEffect(() => () => clearTimeout(scrollTimerRef.current), [])
 
   const recentSymptoms = useMemo(() => {
     const cutoff = new Date()
@@ -75,22 +67,12 @@ export function Health() {
 
   function handleDeleteTap(e, key, item) {
     e.stopPropagation()
-    if (pendingDeleteKey === key) {
-      // Second tap — animate out then delete
-      clearTimeout(deleteTimerRef.current)
-      setPendingDeleteKey(null)
-      setExitingKey(key)
-      setTimeout(async () => {
-        if (item.kind === 'symptom') await deleteSymptom(item.id)
-        else await deleteVitalEntry(item.id)
-        setExitingKey(null)
-      }, 260)
-    } else {
-      // First tap — arm the delete
-      clearTimeout(deleteTimerRef.current)
-      setPendingDeleteKey(key)
-      deleteTimerRef.current = setTimeout(() => setPendingDeleteKey(null), 2500)
-    }
+    setExitingKey(key)
+    setTimeout(async () => {
+      if (item.kind === 'symptom') await deleteSymptom(item.id)
+      else await deleteVitalEntry(item.id)
+      setExitingKey(null)
+    }, 240)
   }
 
   const handleScroll = useCallback(() => {
@@ -191,12 +173,11 @@ export function Health() {
           {filteredHistory.map((item) => {
             const key = `${item.kind}-${item.id}`
             const vt = item.kind === 'vital' ? vitalTypeMap[item.vital_type_id] : null
-            const isPending = pendingDeleteKey === key
             const isExiting = exitingKey === key
             return (
               <div
                 key={key}
-                className={`${styles.historyRow} ${isPending ? styles.pendingDelete : ''} ${isExiting ? styles.exitingRow : ''}`}
+                className={`${styles.historyRow} ${isExiting ? styles.exitingRow : ''}`}
                 data-date={item.timestamp.slice(0, 10)}
               >
                 {item.kind === 'symptom' && (
@@ -225,11 +206,11 @@ export function Health() {
                   </span>
                 </div>
                 <button
-                  className={`${styles.deleteBtn} ${isPending ? styles.deleteBtnArmed : ''}`}
+                  className={styles.deleteBtn}
                   onClick={(e) => handleDeleteTap(e, key, item)}
                   aria-label="Delete entry"
                 >
-                  {isPending ? '✕' : '🗑'}
+                  ✕
                 </button>
               </div>
             )
