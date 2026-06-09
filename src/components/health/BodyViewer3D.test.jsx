@@ -43,6 +43,25 @@ vi.mock('three', () => {
     Raycaster: vi.fn(function () {
       return { setFromCamera: vi.fn(), intersectObject: vi.fn(() => []) }
     }),
+    Group: vi.fn(function () {
+      return { add: vi.fn(), remove: vi.fn(), children: [], traverse: vi.fn() }
+    }),
+    SphereGeometry: vi.fn(function () {
+      return { dispose: vi.fn() }
+    }),
+    Box3: vi.fn(function () {
+      return {
+        setFromObject: vi.fn().mockReturnThis(),
+        getCenter: vi.fn(() => ({ x: 0, y: 0, z: 0 })),
+        getSize: vi.fn(() => ({ x: 1, y: 1, z: 1 })),
+        min: { clone: vi.fn(() => ({ x: 0, y: 0, z: 0 })) },
+        max: { clone: vi.fn(() => ({ x: 1, y: 1, z: 1 })) },
+      }
+    }),
+    Vector3: vi.fn(function () {
+      return { set: vi.fn(), copy: vi.fn(), x: 0, y: 0, z: 0 }
+    }),
+    DoubleSide: 2,
     Vector2: vi.fn(function () {
       return { x: 0, y: 0 }
     }),

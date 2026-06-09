@@ -3,12 +3,11 @@ import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 're
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { useBodyPainter, replayStrokes } from '../../hooks/useBodyPainter'
+import { useBodyPainter } from '../../hooks/useBodyPainter'
 import styles from './BodyViewer3D.module.css'
 
 const BASE = import.meta.env?.BASE_URL ?? '/'
 const MODEL_URL = `${BASE}models/body.glb`
-const CANVAS_SIZE = 1024
 
 export const REGION_CAMERA = {
   'Full Body': { target: [0, 0.8, 0], position: [0, 0.8, 3.2] },
@@ -34,28 +33,29 @@ export const REGION_CAMERA = {
   'Right Foot': { target: [0.3, -0.9, 0], position: [0.8, -0.9, 0.9] },
 }
 
-export const REGION_UV_CENTROID = {
-  'Full Body': { u: 0.5, v: 0.5 },
-  Head: { u: 0.5, v: 0.06 },
-  Neck: { u: 0.5, v: 0.13 },
-  Chest: { u: 0.45, v: 0.26 },
-  'Upper Back': { u: 0.55, v: 0.26 },
-  Abdomen: { u: 0.45, v: 0.4 },
-  'Lower Back': { u: 0.55, v: 0.4 },
-  'Left Shoulder': { u: 0.28, v: 0.21 },
-  'Right Shoulder': { u: 0.72, v: 0.21 },
-  'Left Arm': { u: 0.18, v: 0.37 },
-  'Right Arm': { u: 0.82, v: 0.37 },
-  'Left Hand': { u: 0.13, v: 0.52 },
-  'Right Hand': { u: 0.87, v: 0.52 },
-  'Left Hip': { u: 0.38, v: 0.56 },
-  'Right Hip': { u: 0.62, v: 0.56 },
-  'Left Thigh': { u: 0.38, v: 0.68 },
-  'Right Thigh': { u: 0.62, v: 0.68 },
-  'Left Lower Leg': { u: 0.38, v: 0.82 },
-  'Right Lower Leg': { u: 0.62, v: 0.82 },
-  'Left Foot': { u: 0.38, v: 0.94 },
-  'Right Foot': { u: 0.62, v: 0.94 },
+// Fractional positions within model bounding box [0=min, 1=max] per axis
+const REGION_BOX_FRACTION = {
+  'Full Body': { fx: 0.5, fy: 0.5, fz: 0.7 },
+  Head: { fx: 0.5, fy: 0.96, fz: 0.6 },
+  Neck: { fx: 0.5, fy: 0.88, fz: 0.6 },
+  Chest: { fx: 0.5, fy: 0.72, fz: 0.75 },
+  'Upper Back': { fx: 0.5, fy: 0.72, fz: 0.3 },
+  Abdomen: { fx: 0.5, fy: 0.58, fz: 0.75 },
+  'Lower Back': { fx: 0.5, fy: 0.52, fz: 0.3 },
+  'Left Shoulder': { fx: 0.2, fy: 0.8, fz: 0.6 },
+  'Right Shoulder': { fx: 0.8, fy: 0.8, fz: 0.6 },
+  'Left Arm': { fx: 0.1, fy: 0.6, fz: 0.6 },
+  'Right Arm': { fx: 0.9, fy: 0.6, fz: 0.6 },
+  'Left Hand': { fx: 0.06, fy: 0.4, fz: 0.6 },
+  'Right Hand': { fx: 0.94, fy: 0.4, fz: 0.6 },
+  'Left Hip': { fx: 0.35, fy: 0.44, fz: 0.6 },
+  'Right Hip': { fx: 0.65, fy: 0.44, fz: 0.6 },
+  'Left Thigh': { fx: 0.35, fy: 0.3, fz: 0.6 },
+  'Right Thigh': { fx: 0.65, fy: 0.3, fz: 0.6 },
+  'Left Lower Leg': { fx: 0.35, fy: 0.14, fz: 0.6 },
+  'Right Lower Leg': { fx: 0.65, fy: 0.14, fz: 0.6 },
+  'Left Foot': { fx: 0.35, fy: 0.02, fz: 0.6 },
+  'Right Foot': { fx: 0.65, fy: 0.02, fz: 0.6 },
 }
 
 export function countToHeatColor(count, maxIntensity) {
@@ -63,6 +63,23 @@ export function countToHeatColor(count, maxIntensity) {
   if (maxIntensity <= 2) return `rgba(251,191,36,${alpha})`
   if (maxIntensity <= 3) return `rgba(249,115,22,${alpha})`
   return `rgba(239,68,68,${alpha})`
+}
+
+function heatColorToHex(count, maxIntensity) {
+  if (maxIntensity <= 2) return 0xfbbf24
+  if (maxIntensity <= 3) return 0xf97316
+  return 0xef4444
+}
+
+function makeSphere(radius, color, opacity = 1) {
+  const geo = new THREE.SphereGeometry(radius, 8, 6)
+  const mat = new THREE.MeshStandardMaterial({
+    color,
+    transparent: opacity < 1,
+    opacity,
+    depthTest: false,
+  })
+  return new THREE.Mesh(geo, mat)
 }
 
 export const BodyViewer3D = forwardRef(function BodyViewer3D(
@@ -80,12 +97,15 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
   ref
 ) {
   const mountRef = useRef(null)
-  const canvasRef = useRef(null)
-  const textureRef = useRef(null)
   const meshRef = useRef(null)
   const materialRef = useRef(null)
   const gltfSceneRef = useRef(null)
   const controlsRef = useRef(null)
+  const sceneRef = useRef(null)
+  const paintGroupRef = useRef(null) // holds live stroke meshes during painting
+  const strokeMeshesRef = useRef([]) // [ [mesh,...], [mesh,...] ] one array per committed stroke
+  const heatGroupRef = useRef(null)
+  const modelBoundsRef = useRef(null)
   const isPaintingRef = useRef(isPainting)
   const [loadError, setLoadError] = useState(false)
 
@@ -94,7 +114,7 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
     if (controlsRef.current) controlsRef.current.enabled = !isPainting
   }, [isPainting])
 
-  const painter = useBodyPainter({ canvasRef, textureRef, brushSize, color: paintColor })
+  const painter = useBodyPainter({ brushSize, color: paintColor })
   const painterRef = useRef(painter)
   useEffect(() => {
     painterRef.current = painter
@@ -109,19 +129,98 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
     onStrokesChange?.(painter.strokes)
   }, [painter.strokes, onStrokesChange])
 
+  // Sync 3D sphere meshes with strokes state
+  useEffect(() => {
+    const scene = sceneRef.current
+    if (!scene) return
+
+    const existing = strokeMeshesRef.current
+    const diff = strokes.length - existing.length
+
+    if (diff < 0) {
+      // Undo: remove surplus stroke groups
+      for (let i = strokes.length; i < existing.length; i++) {
+        existing[i].forEach((m) => {
+          scene.remove(m)
+          m.geometry.dispose()
+          m.material.dispose()
+        })
+      }
+      strokeMeshesRef.current = existing.slice(0, strokes.length)
+    } else if (diff > 0) {
+      // New strokes added: create spheres for each new stroke
+      for (let i = existing.length; i < strokes.length; i++) {
+        const stroke = strokes[i]
+        const meshes = stroke.points.map(({ x, y, z }) => {
+          const s = makeSphere(stroke.radius, new THREE.Color(stroke.color))
+          s.position.set(x, y, z)
+          scene.add(s)
+          return s
+        })
+        existing.push(meshes)
+      }
+    } else if (diff === 0 && strokes.length === 0 && existing.length > 0) {
+      // Clear
+      existing.forEach((group) =>
+        group.forEach((m) => {
+          scene.remove(m)
+          m.geometry.dispose()
+          m.material.dispose()
+        })
+      )
+      strokeMeshesRef.current = []
+    }
+  }, [strokes])
+
+  // Stats mode: rebuild heat markers when regionData changes
+  useEffect(() => {
+    const scene = sceneRef.current
+    const bounds = modelBoundsRef.current
+    if (!scene || mode !== 'stats') return
+
+    // Remove old heat group
+    if (heatGroupRef.current) {
+      scene.remove(heatGroupRef.current)
+      heatGroupRef.current.traverse((o) => {
+        if (o.isMesh) {
+          o.geometry.dispose()
+          o.material.dispose()
+        }
+      })
+      heatGroupRef.current = null
+    }
+    if (!bounds || Object.keys(regionData).length === 0) return
+
+    const group = new THREE.Group()
+    const { min, size } = bounds
+
+    for (const [name, { count, maxIntensity }] of Object.entries(regionData)) {
+      const frac = REGION_BOX_FRACTION[name]
+      if (!frac) continue
+      const pos = new THREE.Vector3(
+        min.x + frac.fx * size.x,
+        min.y + frac.fy * size.y,
+        min.z + frac.fz * size.z
+      )
+      const radius = size.y * (0.04 + Math.min(count, 10) * 0.006)
+      const alpha = Math.min(0.85, 0.3 + count * 0.12)
+      const hex = heatColorToHex(count, maxIntensity)
+      const geo = new THREE.SphereGeometry(radius, 12, 8)
+      const mat = new THREE.MeshStandardMaterial({ color: hex, transparent: true, opacity: alpha })
+      const sphere = new THREE.Mesh(geo, mat)
+      sphere.position.copy(pos)
+      group.add(sphere)
+    }
+
+    scene.add(group)
+    heatGroupRef.current = group
+  }, [regionData, mode])
+
   useEffect(() => {
     const el = mountRef.current
     if (!el) return
 
     let cancelled = false
-
-    const paintCanvas = document.createElement('canvas')
-    paintCanvas.width = CANVAS_SIZE
-    paintCanvas.height = CANVAS_SIZE
-    const initCtx = paintCanvas.getContext('2d')
-    initCtx.fillStyle = '#ffffff'
-    initCtx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE)
-    canvasRef.current = paintCanvas
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
     renderer.setSize(el.clientWidth || 300, el.clientHeight || 400)
@@ -130,6 +229,12 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
 
     const scene = new THREE.Scene()
     scene.background = new THREE.Color(0x070c16)
+    sceneRef.current = scene
+
+    // Paint group for live (uncommitted) stroke points
+    const liveGroup = new THREE.Group()
+    scene.add(liveGroup)
+    paintGroupRef.current = liveGroup
 
     const cam = new THREE.PerspectiveCamera(
       45,
@@ -158,14 +263,6 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
     controls.autoRotateSpeed = 3
     controls.enabled = !isPaintingRef.current
 
-    const texture = new THREE.CanvasTexture(paintCanvas)
-    textureRef.current = texture
-
-    if (strokes.length > 0) {
-      replayStrokes(paintCanvas.getContext('2d'), strokes, CANVAS_SIZE, CANVAS_SIZE)
-      texture.needsUpdate = true
-    }
-
     const loader = new GLTFLoader()
     loader.load(
       MODEL_URL,
@@ -176,8 +273,8 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
           if (obj.isMesh && !mesh) mesh = obj
         })
         if (!mesh) return
+
         const material = new THREE.MeshStandardMaterial({
-          map: texture,
           color: 0xffffff,
           side: THREE.DoubleSide,
         })
@@ -187,15 +284,13 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
         scene.add(gltf.scene)
         meshRef.current = mesh
 
-        // Fit camera to actual model bounds — must updateMatrixWorld first so
-        // all parent transforms (scale/rotation in the GLTF node hierarchy) are applied
         gltf.scene.updateMatrixWorld(true)
         const box = new THREE.Box3().setFromObject(gltf.scene)
         const center = box.getCenter(new THREE.Vector3())
         const size = box.getSize(new THREE.Vector3())
         const maxDim = Math.max(size.x, size.y, size.z)
+        modelBoundsRef.current = { min: box.min.clone(), max: box.max.clone(), size: size.clone() }
 
-        console.log('[BodyViewer3D] model bounds:', { center, size, maxDim })
         const camDist = (maxDim / 2 / Math.tan((cam.fov * Math.PI) / 180 / 2)) * 1.5
         cam.near = maxDim / 100
         cam.far = maxDim * 100
@@ -203,11 +298,23 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
         cam.updateProjectionMatrix()
         controls.target.copy(center)
         controls.update()
+
+        // Replay existing strokes (e.g. re-mounting with saved data)
+        if (strokes.length > 0) {
+          strokes.forEach((stroke) => {
+            const meshes = stroke.points.map(({ x, y, z }) => {
+              const s = makeSphere(stroke.radius, new THREE.Color(stroke.color))
+              s.position.set(x, y, z)
+              scene.add(s)
+              return s
+            })
+            strokeMeshesRef.current.push(meshes)
+          })
+        }
       },
       undefined,
       () => {
-        if (cancelled) return
-        setLoadError(true)
+        if (!cancelled) setLoadError(true)
       }
     )
 
@@ -226,18 +333,16 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
       getNDC(e)
       raycaster.setFromCamera(ndc, cam)
       const hits = raycaster.intersectObject(meshRef.current, true)
-       
-      console.log(
-        '[paint] ndc:',
-        ndc.x.toFixed(2),
-        ndc.y.toFixed(2),
-        'hits:',
-        hits.length,
-        hits[0]?.uv
-      )
-      if (!hits.length || !hits[0].uv) return
+      if (!hits.length) return
+      const { point } = hits[0]
+      const bounds = modelBoundsRef.current
+      const radius = bounds ? Math.max(bounds.size.x, bounds.size.y, bounds.size.z) * 0.015 : 0.02
       painterRef.current.beginStroke()
-      painterRef.current.addPoint(hits[0].uv.x, hits[0].uv.y)
+      painterRef.current.addPoint(point.x, point.y, point.z)
+      // Show live dot immediately
+      const dot = makeSphere(radius, new THREE.Color(paintColor))
+      dot.position.copy(point)
+      liveGroup.add(dot)
     }
 
     function handlePointerMove(e) {
@@ -245,14 +350,25 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
       e.preventDefault()
       getNDC(e)
       raycaster.setFromCamera(ndc, cam)
-      const hits = raycaster.intersectObject(meshRef.current)
-      if (!hits.length || !hits[0].uv) return
-      painterRef.current.addPoint(hits[0].uv.x, hits[0].uv.y)
+      const hits = raycaster.intersectObject(meshRef.current, true)
+      if (!hits.length) return
+      const { point } = hits[0]
+      const bounds = modelBoundsRef.current
+      const radius = bounds ? Math.max(bounds.size.x, bounds.size.y, bounds.size.z) * 0.015 : 0.02
+      painterRef.current.addPoint(point.x, point.y, point.z)
+      const dot = makeSphere(radius, new THREE.Color(paintColor))
+      dot.position.copy(point)
+      liveGroup.add(dot)
     }
 
     function handlePointerUp() {
-      // Always commit any open stroke — safe because endStroke() is a no-op when no stroke is active
       painterRef.current.endStroke()
+      // Clear live group (stroke now in painter.strokes → synced via useEffect)
+      liveGroup.children.slice().forEach((m) => {
+        liveGroup.remove(m)
+        m.geometry.dispose()
+        m.material.dispose()
+      })
     }
 
     renderer.domElement.addEventListener('pointerdown', handlePointerDown)
@@ -287,14 +403,14 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
       controls.dispose()
       controlsRef.current = null
       renderer.dispose()
-      texture.dispose()
+      sceneRef.current = null
+      paintGroupRef.current = null
+      strokeMeshesRef.current = []
       if (gltfSceneRef.current) {
         gltfSceneRef.current.traverse((obj) => {
           if (obj.isMesh) {
             obj.geometry?.dispose()
-            if (obj.material && obj.material !== materialRef.current) {
-              obj.material.dispose()
-            }
+            if (obj.material && obj.material !== materialRef.current) obj.material.dispose()
           }
         })
         gltfSceneRef.current = null
@@ -306,31 +422,6 @@ export const BodyViewer3D = forwardRef(function BodyViewer3D(
       if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement)
     }
   }, [region, mode, autoRotate]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Separate effect: redraw heat map when regionData changes (stats mode)
-  useEffect(() => {
-    if (mode !== 'stats' || !canvasRef.current || !textureRef.current) return
-    const ctx = canvasRef.current.getContext('2d')
-    if (!ctx) return
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE)
-    for (const [name, { count, maxIntensity }] of Object.entries(regionData)) {
-      const centroid = REGION_UV_CENTROID[name]
-      if (!centroid) continue
-      const x = centroid.u * CANVAS_SIZE
-      const y = centroid.v * CANVAS_SIZE
-      const r = Math.min(120, 40 + count * 15)
-      const color = countToHeatColor(count, maxIntensity)
-      const grad = ctx.createRadialGradient(x, y, 0, x, y, r)
-      grad.addColorStop(0, color)
-      grad.addColorStop(1, 'rgba(0,0,0,0)')
-      ctx.fillStyle = grad
-      ctx.beginPath()
-      ctx.arc(x, y, r, 0, Math.PI * 2)
-      ctx.fill()
-    }
-    textureRef.current.needsUpdate = true
-  }, [regionData, mode])
 
   if (loadError) {
     return <div className={styles.error}>3D view unavailable — model failed to load</div>

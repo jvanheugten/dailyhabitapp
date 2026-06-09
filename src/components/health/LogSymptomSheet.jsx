@@ -49,7 +49,7 @@ export function LogSymptomSheet({ onClose }) {
       intensity,
       pain_type: JSON.stringify(painTypes),
       notes,
-      uv_strokes: JSON.stringify(strokes),
+      world_strokes: JSON.stringify(strokes),
       timestamp: new Date(timestamp).toISOString(),
     })
     onClose()
